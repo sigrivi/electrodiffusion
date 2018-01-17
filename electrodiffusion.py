@@ -72,12 +72,10 @@ def solveEquation(c1,c2,deltat,deltax):
 		Phi = integrate(phi,0,1)	                                           # Phi is the potential
 
 		c1New[1:N-1] = c1[1:N-1] + alpha1*(c1[2:N]-2*c1[1:N-1]+c1[0:N-2]) \
-		+ deltax*alpha1*z1/4*((c1[2:N] + c1[1:N-1])*(phi[2:N]+phi[1:N-1]) \
-		- ( c1[1:N-1]+c1[0:N-2] )*( phi[1:N-1]+phi[0:N-2] ))
+		+ deltax*alpha1*z1/4*((c1[2:N] + c1[1:N-1])*(phi[2:N] + phi[1:N-1]) - (c1[1:N-1] + c1[0:N-2])*(phi[1:N-1] + phi[0:N-2]))
 
 		c2New[1:N-1] = c2[1:N-1] + alpha2*(c2[2:N]-2*c2[1:N-1]+c2[0:N-2])\
-		 + deltax*alpha2*z2/4*( ( c2[2:N]+c2[1:N-1] )*( phi[2:N]+phi[1:N-1] )\
-		 - ( c2[1:N-1]+c2[0:N-2] )*( phi[1:N-1]+phi[0:N-2] ))
+		 + deltax*alpha2*z2/4*((c2[2:N] + c2[1:N-1])*(phi[2:N] + phi[1:N-1]) - (c2[1:N-1] + c2[0:N-2])*(phi[1:N-1] + phi[0:N-2]))
 
 
 
@@ -117,9 +115,15 @@ def solveEquation2(Ions,deltat,deltax):
 			alpha = deltat*I.D/(deltax**2*lambda_n**2)
 			I.cNew[1:N-1] = I.c[1:N-1] + alpha*(I.c[2:N]-2*I.c[1:N-1]+I.c[0:N-2]) + deltax*alpha*I.z/4*( ( I.c[2:N]+I.c[1:N-1] )*( phi[2:N]+phi[1:N-1] ) - ( I.c[1:N-1]+I.c[0:N-2] )*( phi[1:N-1]+phi[0:N-2] ))
 			I.c = I.cNew
+
+		if t%200 == 0:
+			if t>0:
+				plt.plot(I.c,label='c1 t=%d' %t)
+	print(t)
 	return(Ions, Phi)
 
 #[Ion1,Ion2], Phi = solveEquation2(Ions,deltat,deltax)
+
 C1,C2,Phi = solveEquation(c1,c2, deltat, deltax)
 print(np.sum(C1-C2))
 
@@ -130,6 +134,8 @@ plt.show()
 plt.plot(Phi, label = 'Phi')
 plt.legend()
 plt.show()
+
+
 
 sys.exit()
 
