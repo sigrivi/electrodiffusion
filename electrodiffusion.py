@@ -34,9 +34,9 @@ def integrate(v,xmin,xmax):
 		V[i+1] = Dx*(v[i+1]+v[i])/2 + V[i]	
 	return(V)
 
-N = 100                                         # number of interior points
+N = 10                                         # number of interior points
 c1 = np.ones(N)*.145                           # initial concentration vector
-c1[50] = 0.15
+c1[5] = 0.15
 c2 = c1.copy()
 z1 = 1                                         # valence
 z2 = -1
@@ -71,13 +71,26 @@ def solveEquation(c1,c2,deltat,deltax):
 		phi = -((z1*D1*dc1dx + z2*D2*dc2dx)/(z1**2*D1*c1 + z2**2*D2*c2 ))       # phi is the derivative of the potential
 		Phi = integrate(phi,0,1)	                                           # Phi is the potential
 
-		c1New[1:N-1] = c1[1:N-1] + alpha1*(c1[2:N]-2*c1[1:N-1]+c1[0:N-2]) \
-		+ deltax*alpha1*z1/4*((c1[2:N] + c1[1:N-1])*(phi[2:N] + phi[1:N-1]) - (c1[1:N-1] + c1[0:N-2])*(phi[1:N-1] + phi[0:N-2]))
+		#c1New[1:N-1] = c1[1:N-1] + alpha1*(c1[2:N]-2*c1[1:N-1]+c1[0:N-2]) \
+		#+ deltax*alpha1*z1/4*((c1[2:N] + c1[1:N-1])*(phi[2:N] + phi[1:N-1]) - (c1[1:N-1] + c1[0:N-2])*(phi[1:N-1] + phi[0:N-2]))
 
-		c2New[1:N-1] = c2[1:N-1] + alpha2*(c2[2:N]-2*c2[1:N-1]+c2[0:N-2])\
-		 + deltax*alpha2*z2/4*((c2[2:N] + c2[1:N-1])*(phi[2:N] + phi[1:N-1]) - (c2[1:N-1] + c2[0:N-2])*(phi[1:N-1] + phi[0:N-2]))
+		#c2New[1:N-1] = c2[1:N-1] + alpha2*(c2[2:N]-2*c2[1:N-1]+c2[0:N-2])\
+		# + deltax*alpha2*z2/4*((c2[2:N] + c2[1:N-1])*(phi[2:N] + phi[1:N-1]) - (c2[1:N-1] + c2[0:N-2])*(phi[1:N-1] + phi[0:N-2]))
 
 
+
+
+
+		c1New[2:N-2] = c1[2:N-2] + alpha1*(c1[4:N]-2*c1[2:N-2]+c1[:N-4])/4 \
+		+ deltax*alpha1*z1/4*((c1[3:N-1] + c1[2:N-2])*(phi[3:N-1] + phi[2:N-2]) - (c1[2:N-2] + c1[1:N-3])*(phi[2:N-2] + phi[1:N-3]))
+
+		c2New[2:N-2] = c2[2:N-2] + alpha2*(c2[4:N]-2*c2[2:N-2]+c2[:N-4])/4 \
+		+ deltax*alpha2*z2/4*((c2[3:N-1] + c2[2:N-2])*(phi[3:N-1] + phi[2:N-2]) - (c2[2:N-2] + c2[1:N-3])*(phi[2:N-2] + phi[1:N-3]))
+
+		#for i in range(1,N-1):
+		#	if i%2 != 0: #c1New[i]-0.145 < 1.e-7
+		#		c1New[i] = (c1New[i-1]+c1New[i+1])/2
+		#		c2New[i] = (c2New[i-1]+c2New[i+1])/2
 
 
 
@@ -101,6 +114,9 @@ def solveEquation(c1,c2,deltat,deltax):
 				plt.plot(c1,label='c1 t=%d' %t)	
 	plt.legend()
 	plt.show()
+
+	print(c1)
+	
 	return(c1, c2, Phi)
 
 def solveEquation2(Ions,deltat,deltax):
