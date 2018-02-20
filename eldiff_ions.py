@@ -22,7 +22,7 @@ class Ion:
 
 # The use of this class imlplies the assumtion of c_Na + c_K = c_Cl
 class ConcentrationProfile:
-	def __init__(self, x_values, c_values, delta_x, Na_base, K_base, name): # c_values are in mM
+	def __init__(self, x_values, c_values, delta_x, Na_base, K_base, name, soma): # c_values are in mM
 		self.N_x     = int(x_values[-1]) + 1
 		self.delta_x = delta_x # delta_x is measured in meters
 		self.delta_c = 0.001*np.interp(np.linspace(0, self.N_x-1, num = self.N_x), x_values, c_values)
@@ -30,6 +30,7 @@ class ConcentrationProfile:
 		self.c_K     = 0.001*K_base*np.ones(self.N_x) + self.delta_c
 		self.c_Cl    = self.c_Na + self.c_K
 		self.name    = name
+		self.soma    = soma #indicate which compartment is the soma compartment (index starts at zero)
 
 def integrate(v,xmin,xmax):
 	Nx = len(v)
@@ -40,7 +41,7 @@ def integrate(v,xmin,xmax):
 	return(V)
 
 
-def solveEquation(Ions,lambda_n, N_t, delta_t,N, delta_x):
+def solveEquation(Ions,lambda_n, N_t, delta_t, N, delta_x):
 	
 	Phi_of_t = np.zeros((N-1, N_t))
 	x_min = 0
@@ -110,7 +111,7 @@ def makeAkses(parameters):
 
 if __name__=="__main__":
 
-	N_t = 10000          # t_final = N_t * delta_t
+	N_t = 100000          # t_final = N_t * delta_t
 	delta_t = 1/1000      # delta_t in seconds
 	delta_x = 1/10000     # delta_x i meters
 
@@ -125,14 +126,16 @@ if __name__=="__main__":
 	DK = 1.96e-9
 
 # tortuosity
-	lambda_n = 1.6    
+	lambda_n = 1.6 
+
 # Phi is dimensionless, needs to be multiplied with Psi = RT/F = 0.0267 V 
 	Psi = 8.3144598*310/(96485.333)
 
-                           
+# -----------------------------------------------------------------------------
+# concentration profiles                          
 
-#	halnes2016 = ConcentrationProfile(np.asarray([1,2,5,12,14]), np.asarray([0,5,1,2,0]), delta_x, 150, 3, 'halnes2016')
-#	N_x = halnes2016.N_x
+	Halnes2016 = ConcentrationProfile(np.asarray([1,2,5,12,14]), np.asarray([0,5,1,2,0]), delta_x, 150, 3, 'Halnes2016', 2)
+
 
 	c_values = np.asarray(\
 		      [0,0.1350844277673544, 0.3827392120075046, 0.48780487804878053, 0.74296435272045, 1.1782363977485926,\
@@ -141,25 +144,33 @@ if __name__=="__main__":
 	           0.8405253283302062, 0.893058161350844, 0.8930581613508446, 0.8780487804878045, 0.8930581613508448, \
 	           0.8255159474671664, 0.908067542213884, 0.8180112570356467, 0.8405253283302068, 0.7804878048780483,0])
 	x_values = np.linspace(0,26,num = 27)
-	Gratiy2017 = ConcentrationProfile(x_values, c_values, delta_x, 150, 3, 'Gratiy2017')
+
+	Gratiy2017 = ConcentrationProfile(x_values, c_values, delta_x, 150, 3, 'Gratiy2017', 9)
 
 
-	N_x = Gratiy2017.N_x
+	Dietzel1982_1 = ConcentrationProfile([0,2,4,6,8,10,16,17], [0,7.5,4.5,3.5,5,3,0.5,0], delta_x, 148,3, 'Dietzel1982_1', 8)
 
+	Profiles = [Gratiy2017, Halnes2016, Dietzel1982_1]
+
+# choose a profile from the list of profiles
+	choose_profile = 2
+
+# save the parameters used
+	N_x = Profiles[choose_profile].N_x
 	parameters = [N_t, delta_t, N_x, delta_x]
-#	np.save("parameters.npy", parameters)
+	np.save(Profiles[choose_profile].name +"_parameters.npy", parameters)
 
 # vectors for the axes
 	t,x = makeAkses(parameters)
 # -----------------------------------------------------------------------------
 
 # initialize ions
-#	Ions = [Ion(halnes2016.c_Na,DNa,zNa,'Na+'),Ion(halnes2016.c_Cl, DCl, zCl,'Cl-' ),Ion(halnes2016.c_K, DK, zK,'K+' )]
-	Ions = [Ion(Gratiy2017.c_Na,DNa,zNa,'Na+'),Ion(Gratiy2017.c_Cl, DCl, zCl,'Cl-' ),Ion(Gratiy2017.c_K, DK, zK,'K+' )]
+	Ions = [Ion(Profiles[choose_profile].c_Na,DNa,zNa,'Na+'),Ion(Profiles[choose_profile].c_Cl, DCl, zCl,'Cl-' ),Ion(Profiles[choose_profile].c_K, DK, zK,'K+' )]
 
 
 # check electroneutrality
-	el_sum = electroneutrality(Ions,N_x, plot = 'true') # plot = 'true' if you want to plot 
+	el_sum = electroneutrality(Ions, N_x) # plot = 'true' if you want to plot 
+	assert np.amax(el_sum) < 1.e-14       # unit test
 
 # plot initial ion concentration
 	plotIons(Ions,x)
@@ -168,7 +179,8 @@ if __name__=="__main__":
 	[sodium, chloride, potassium], Phi_of_t = solveEquation(Ions, lambda_n, N_t, delta_t, N_x, delta_x)
 
 # Check electroneutrality
-	el_sum = electroneutrality(Ions,N_x, plot = 'true') # plot = 'true' if you want to plot
+	el_sum = electroneutrality(Ions, N_x) # plot = 'true' if you want to plot
+	assert np.amax(el_sum) < 1.e-14       # unit test
 
 # plot final ion concentration
 #	plotIons(Ions,x)
@@ -176,84 +188,24 @@ if __name__=="__main__":
 # Phi_of_t is dimensionless, needs to be multiplied with Psi = RT/F = 0.0267 V
 # to get Phi_of_t in mV: *1000
 	Phi_of_t = Phi_of_t*Psi*1000
+
+# save Phi(x,t) 
+	np.save( Profiles[choose_profile].name + "_Phi_of_t.npy" , Phi_of_t)
+
+# contour plot of Phi
+	X,Y = np.meshgrid(t,x[1:])
+	plt.figure()
+	cp = plt.contourf(X,Y,Phi_of_t)
+	plt.colorbar(cp)
+	plt.xlabel('time (s)')
+	plt.ylabel('cortical depth (mm)')
+	plt.title('Phi (mV)')
+	plt.savefig('Phi_X_T', dpi =225)
+	plt.show()
+
+
 
 #-----------------------------------------------------------------------------
-
-	sys.exit()
-
-	delta_t = 1/1000
-	delta_x = 1/10000
-	#t_final = 100
-	#x_max = 0.01
-	N_t = 100000          # t_final = N_t * delta_t
-	N_x = 27               # x_max = N_x*delta_x
-	fs = N_t*delta_t*delta_t # sampling rate
-	parameters = [N_t, delta_t, N_x, delta_x]
-	np.save("parameters.npy", parameters)
-
-# vectors for the axes
-	t,x = makeAkses(parameters)
-# initial concentrations: 
-	c1 = np.ones(N_x)*.150                           
-	#c1[N_x//2] = .145
-	c2 = np.ones(N_x)*.153
-	#c2[N_x//2] = .153
-	c3 = np.ones(N_x)*.003                           
-	#c3[N_x//2] = .008
-# the original delta_c-vector has 25 elements, I added 2 more, to keep it zero at the edges
-	delta_c = 0.001*np.asarray(\
-		      [0,0.1350844277673544, 0.3827392120075046, 0.48780487804878053, 0.74296435272045, 1.1782363977485926,\
-	           1.4859287054409005, 1.5759849906191372, 1.4934333958724202, 1.891181988742964, 1.590994371482176, \
-	           1.0281425891181983, 0.6979362101313321, 0.6378986866791744, 0.6378986866791747, 0.6829268292682926,\
-	           0.8405253283302062, 0.893058161350844, 0.8930581613508446, 0.8780487804878045, 0.8930581613508448, \
-	           0.8255159474671664, 0.908067542213884, 0.8180112570356467, 0.8405253283302068, 0.7804878048780483,0])
-	c1 -= delta_c
-	c3 += delta_c
-# valence: 
-	z1 = 1                                         
-	z2 = -1
-	z3 = 1
-
-# diffusion constants: 
-	D1 = 1.33e-9  
-	D2 = 2.03e-9
-	D3 = 1.96e-9
-
-# tortuosity
-	lambda_n = 1.6    
-# Phi is dimensionless, needs to be multiplied with Psi = RT/F = 0.0267 V 
-	Psi = 8.3144598*310/(96485.333)
-
-                           
-# -----------------------------------------------------------------------------
-
-# initialize ions
-	Ions = [Ion(c1,D1,z1,'sodium'),Ion(c2, D2, z2,'chloride' ),Ion(c3, D3, z3,'potassium' )]
-
-# check electroneutrality
-	el_sum = electroneutrality(Ions,N_x, plot = 'true') # plot = 'true' if you want to plot 
-
-# plot initial ion concentration
-	plotIons(Ions,x)
-
-# solve the equation
-	[sodium, chloride, potassium], Phi_of_t = solveEquation(Ions, lambda_n, N_t, delta_t, N_x, delta_x)
-
-# Check electroneutrality
-	el_sum = electroneutrality(Ions,N_x, plot = 'true') # plot = 'true' if you want to plot
-
-# plot final ion concentration
-#	plotIons(Ions,x)
-
-# Phi_of_t is dimensionless, needs to be multiplied with Psi = RT/F = 0.0267 V
-# to get Phi_of_t in mV: *1000
-	Phi_of_t = Phi_of_t*Psi*1000
-
-#------------------------------------------------------------------------------
-	
-# save Phi(x,t) 
-	np.save("Phi_of_t.npy", Phi_of_t)
-	
 
 
 	sys.exit()
@@ -305,10 +257,3 @@ if __name__=="__main__":
 #	for i in range(N_t-1):
 #		phi_average[i] = np.sum(Phi_of_t[:,i])
 #	phi_average = phi_average/(N_x-1)
-
-#	plt.plot(t[:-1],phi_average[:-1]) # *1000 to plot in mV
-#	plt.title('spatial average of Phi')
-#	plt.xlabel('time (s)')
-#	plt.ylabel('Phi (mV)')
-#	plt.savefig('phi_average', dpi = 225)
-#	plt.show()
