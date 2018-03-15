@@ -33,6 +33,18 @@ class ConcentrationProfile:
 		self.c_K     = 0.001*K_base*np.ones(self.N_x) + self.delta_c
 		self.c_Cl    = self.c_Na + self.c_K
 		self.name    = name
+		
+class Model:
+	def __init__(self, phi, parameters, name, color): 
+		self.phi     = phi
+		self.parameters = parameters # parameters = [N_t, delta_t, N_x, delta_x]
+		self.name = name
+		self.N_t = parameters[0]
+		self.delta_t = parameters[1]
+		self.f = np.zeros(int(self.N_t/2 +1))
+		self.psd = np.zeros(int(self.N_t/2+1))
+		self.location = 0
+		self.color = color
 
 def integrate(v,xmin,xmax):
 	Nx = len(v)
@@ -73,12 +85,12 @@ def solveEquation(Ions,lambda_n, N_t, delta_t, N, delta_x):
 		
 			I.c = I.cNew.copy()
 	
-		if t%(N_t/5) == 0:
-			if t>0:
-				plt.plot(Ions[0].c,label=' t=%.1f' %(t*delta_t))
-	plt.title('sodium concentration')
-	plt.legend()
-	plt.show()
+#		if t%(N_t/5) == 0:
+#			if t>0:
+#				plt.plot(Ions[0].c,label=' t=%.1f' %(t*delta_t))
+#	plt.title('sodium concentration')
+#	plt.legend()
+#	plt.show()
 	return(Ions, Phi_of_t)
 
 def electroneutrality(Ions, N, plot = 'false' ):
@@ -97,7 +109,7 @@ def electroneutrality(Ions, N, plot = 'false' ):
 
 def plotIons(Ions, x, filename):
 	for I in Ions:
-		plt.plot(x,I.c-I.c[0], label = I.name)
+		plt.plot(x,I.c-I.c[0]*np.ones(len(I.c)), label = I.name)
 	plt.title('deviation from base line concentrations')
 	plt.ylabel('$c-c_0$ (M)')
 	plt.xlabel('cortical depth (mm)')
@@ -113,7 +125,7 @@ def makeAkses(parameters):
 
 def makePSD(Phi_of_t, N_t, delta_t):
 	fs = 1/delta_t # sampling frequency
-	psd_max = np.zeros(N_t//2 +1)
+	psd_max = np.zeros(int(N_t/2 +1))
 
 	for i in range(int(Phi_of_t.shape[0])-1):
 	    f, psd_new = signal.periodogram(Phi_of_t[i,:], fs)
@@ -173,10 +185,9 @@ if __name__=="__main__":
 	Nicholson1987 = ConcentrationProfile([0,1,2,3,4,5,6,7], [0, 4.4, 2.7, 1.6, 1., 0.8, 0.7, 0], delta_x, 150, 3, 'Nicholson1987')
 
 # 4 EkstremeGradient
-	EkstremeGradient = ConcentrationProfile(halnes_x_values, halnes_delta_c*6, delta_x,  150, 3, 'EkstremeGradient')
 
 # List of all profiles
-	Profiles = [Gratiy2017, Halnes2016, Dietzel1982_1, Nicholson1987, EkstremeGradient]
+	Profiles = [Gratiy2017, Halnes2016, Dietzel1982_1, Nicholson1987]
 
 # choose a profile from the list of profiles
 	choose_profile = 1
@@ -214,7 +225,7 @@ if __name__=="__main__":
 	plt.savefig('PSD',dpi=225)
 	plt.show()
 
-	sys.exit()
+	
 
 # Check electroneutrality
 	el_sum = electroneutrality(Ions, N_x, plot = 'true') # true = 'true' if you want to plot
