@@ -91,7 +91,7 @@ def solveEquation(Ions,lambda_n, N_t, delta_t, N, delta_x):
 #	plt.title('sodium concentration')
 #	plt.legend()
 #	plt.show()
-	return(Ions, Phi_of_t)
+	return(Phi_of_t)
 
 def electroneutrality(Ions, N, plot = 'false' ):
 	valence_times_concentration = np.zeros(N)
@@ -136,6 +136,7 @@ def makePSD(Phi_of_t, N_t, delta_t):
 	return(f, psd_max, location)
 #-----------------------------------------------
 if __name__=="__main__":
+	sys.exit()
 
 	N_t = 100000          # t_final = N_t * delta_t
 	delta_t = 1/1000      # delta_t in seconds
