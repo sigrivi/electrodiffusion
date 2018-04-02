@@ -27,7 +27,7 @@ if __name__=="__main__":
 	c_Ca = .001*np.load("data_cCa.npy")
 	c_X  = .001*np.load("data_cX.npy")
 
-	N_t = 100000          # t_final = N_t * delta_t
+	N_t = 10000          # t_final = N_t * delta_t
 	delta_t = 1/1000      # delta_t in seconds
 	delta_x = 1/10000     # delta_x i meters
 	N_x =  len(c_K)
@@ -74,22 +74,23 @@ if __name__=="__main__":
 
 #	sys.exit()
 	Phi = []
-	PSD = []
+	PSD = np.zeros((len(Models), int(N_t/2 +1)))
 	i = 0
 	j = 0
 	for M in Models:
-		plotIons(M, x_values, 'ions_before%d' %j)
+#		plotIons(M, x_values, 'ions_before%d' %j)
 		el_sum = electroneutrality(M, N_x)
 		print(j,np.amax(el_sum))
 		j+= 1
-
+	location = 0 #NB: this is only used for coparing PSDs at different compartments!
 	for M in Models:
 		Phi_of_t = solveEquation(M, lambda_n, N_t, delta_t, N_x, delta_x)
 		Phi_of_t = Phi_of_t*Psi* 1000
 		Phi.append(Phi_of_t)
-		f, psd, location = makePSD(Phi_of_t, N_t, delta_t)
+#		f, psd, location = makePSD(Phi_of_t, N_t, delta_t)
+		f, psd = signal.periodogram(Phi_of_t[location,:], 1/delta_t)
 		print(i,location)
-		PSD.append(psd)
+		PSD[i,:] = psd
 		plt.plot(np.log10(f[1:-1]), np.log10(psd[1:-1]), label = Names[i])
 		plt.legend()
 		i += 1
@@ -103,12 +104,14 @@ if __name__=="__main__":
 
 	j = 0
 	for M in Models:
-		plotIons(M, x_values, 'ions_after%d' %j)
+#		plotIons(M, x_values, 'ions_after%d' %j)
 		el_sum = electroneutrality(M, N_x)
 		print(j,np.amax(el_sum))
+		print('mean deviation',np.mean(np.log10(PSD[j,1:-1]) - np.log10(PSD[0,1:-1])))
 		j+= 1
 
-
+#	print(np.mean(np.log10(PSD[1,1:-1])))
+#	print('mean deviation',np.mean(np.log10(PSD[1,1:-1]) - np.log10(PSD[0,1:-1])))
 # contour plot of
 
 # -----------------------------------------------------------------------------
