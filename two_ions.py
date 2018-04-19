@@ -57,6 +57,8 @@ if __name__=="__main__":
 
 	tau = (lambda_n*L)**2/(D*np.pi**2)
 
+	print('tau', tau)
+	sys.exit()
 	c_Na = c_0 + delta_c
 	c_Cl = c_0 + delta_c
 
@@ -75,6 +77,8 @@ if __name__=="__main__":
 #	plotIons(Ions, x, 'two_ions1')
 	Phi_of_t1, c_of_t1 = solveEquation(Ions1,lambda_n, N_t, delta_t, N_x, delta_x)
 	Phi_of_t2, c_of_t2 = solveEquation(Ions2,lambda_n, N_t, delta_t, N_x, delta_x)
+	Phi_of_t1 = Phi_of_t1*Psi*1000
+	Phi_of_t2 = Phi_of_t2*Psi*1000
 #	plotIons(Ions, x, 'two_ions2')
 
 #	plt.plot(x*1000, c_of_t1[:,N_t-1], label = 'Na')
@@ -90,4 +94,18 @@ if __name__=="__main__":
 #	plt.plot(t, c_of_t1[N_x//2,:] - c_of_t2[N_x//2,:])
 #	plt.plot(t,c_of_t1[N_x//2,:] - c_exact_of_t[N_x//2,:])
 #	plt.show()
-	plotPhi(Phi_of_t1, [N_t, delta_t, N_x, delta_x], 'phi_two_ions')
+	print('max phi', np.amax(Phi_of_t1[:,0]))
+	for i in range(5):
+
+		time = int(i*delta_t*N_t/5)
+		plt.plot(x[:-1]*1000,Phi_of_t1[:, int(i*N_t/5)], label = 't = %d s' %time )
+
+	plt.plot(x[:-1]*1000, .1095*np.sin(np.pi*x[:-1]/L))
+	plt.xlabel('x in mm')
+	plt.ylabel('$\Phi(x)$ in mV')
+	plt.title('The diffusion potential of the two-ion system at time t')
+	plt.legend()
+	plt.savefig('two_ions', dpi=500)
+	plt.show()
+	#plotPhi(Phi_of_t1, [N_t, delta_t, N_x, delta_x], 'Na_and_Cl')
+	
