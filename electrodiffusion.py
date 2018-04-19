@@ -55,8 +55,24 @@ def integrate(v,xmin,xmax):
 	V[-1] = Dx*v[-1]/2 + V[-2]
 	return(V[1:])
 
+def forwardStep(Ions,lambda_n, N_t, delta_t, N_x, delta_x, grad_phi):
+	for I in Ions:
+		alpha = delta_t*I.D/(delta_x**2*lambda_n**2)
+		I.cNew[1:N_x-1] = I.c[1:N_x-1] + alpha*(I.c[2:N_x]-2*I.c[1:N_x-1]+I.c[:N_x-2]) \
+					   + delta_x*alpha*I.z/2.*\
+					   ((I.c[2:N_x] + I.c[1:N_x-1])*grad_phi[1:N_x-1] - \
+					   		(I.c[1:N_x-1] + I.c[:N_x-2])*grad_phi[:N_x-2])
+		I.c = I.cNew.copy()
 
-def solveEquation(Ions,lambda_n, N_t, delta_t, N_x, delta_x):
+def exponentialDecay(Ions, delta_t, tau): 
+	delta_c = Ions[1].c-Ions[1].c[0]
+	Ions[1].cNew = delta_c*np.exp(-delta_t/tau) + Ions[1].c[0]
+	Ions[0].cNew = -delta_c*np.exp(-delta_t/tau) + Ions[0].c[0]
+	Ions[1].c = Ions[1].cNew.copy()
+	Ions[0].c = Ions[0].cNew.copy()
+
+
+def solveEquation(Ions,lambda_n, N_t, delta_t, N_x, delta_x, tau = 0):
 	
 	Phi_of_t = np.zeros((N_x-1, N_t))
 	c_of_t =np.zeros((N_x, N_t)) # for storing the concentrations of one ion species
@@ -77,16 +93,13 @@ def solveEquation(Ions,lambda_n, N_t, delta_t, N_x, delta_x):
 
 		Phi_of_t[:,t] = Phi[:]
 
-
+		if tau == 0:
 		# Then we use grad phi at the half-points
-		for I in Ions:
-			alpha = delta_t*I.D/(delta_x**2*lambda_n**2)
-			I.cNew[1:N_x-1] = I.c[1:N_x-1] + alpha*(I.c[2:N_x]-2*I.c[1:N_x-1]+I.c[:N_x-2]) \
-						   + delta_x*alpha*I.z/2.*\
-						   ((I.c[2:N_x] + I.c[1:N_x-1])*grad_phi[1:N_x-1] - \
-						   		(I.c[1:N_x-1] + I.c[:N_x-2])*grad_phi[:N_x-2])
-		
-			I.c = I.cNew.copy()
+			forwardStep(Ions,lambda_n, N_t, delta_t, N_x, delta_x, grad_phi)
+		else:
+			exponentialDecay(Ions, delta_t, tau)
+
+
 			
 		c_of_t[:,t] = Ions[0].c	
 #		if t%(N_t/5) == 0:
@@ -113,17 +126,17 @@ def electroneutrality(Ions, N, plot = 'false' ):
 
 def plotIons(Ions, x, filename):
 	for I in Ions:
-		plt.plot(x,I.c-I.c[0]*np.ones(len(I.c)), label = I.name)
-	plt.title('deviation from base line concentrations')
-	plt.ylabel('$c-c_0$ (M)')
-	plt.xlabel('cortical depth (mm)')
+		plt.plot(1000*(I.c-I.c[0]*np.ones(len(I.c))),-x, label = I.name)
+	plt.title('Deviation from base line concentrations (' + filename +')')
+	plt.xlabel('$\Delta c$ (mM)')
+	plt.ylabel('cortical depth (mm)')
 	plt.legend()
-	plt.savefig(filename +'_delta_c', dpi=225)
+	plt.savefig(filename +'_delta_c',dpi=225)
 	plt.show()
 
-def makeAkses(parameters):
+def makeAkses(parameters): # parameters = [N_t, delta_t, N_x, delta_x]
 	t = np.linspace(0,parameters[0]*parameters[1], num = parameters[0])
-	x = np.linspace(0,(parameters[2]-2)*parameters[3]*1000, num=parameters[2]) # NB: Nx-2 because the ends are not included *1000 to get in mm
+	x = np.linspace(0,(parameters[2]-1)*parameters[3]*1000, num=parameters[2]) # NB:  *1000 to get in mm
 
 	return(t,x)
 
@@ -141,18 +154,20 @@ def makePSD(Phi_of_t, N_t, delta_t):
 
 def plotPhi(Phi_of_t, parameters, name):
 #	parameters = [N_t, delta_t, N_x, delta_x]
-	x_max = (parameters[2]-2)*parameters[3]
-	t = np.linspace(0,parameters[0]*parameters[1], num = parameters[0])
-	x = (np.linspace(0., x_max, num=parameters[2]-1) - x_max - parameters[3]/2)*1000
+	x_max = (parameters[2]-1)*parameters[3]
+	t,x = makeAkses(parameters)
+	x = x[:-1] - x_max*1000
+#	t = np.linspace(0,parameters[0]*parameters[1], num = parameters[0])
+#	x = (np.linspace(0., x_max, num=parameters[2]-1) - x_max)*1000
 
 	Phi_of_t = np.flip(Phi_of_t,0)
 	X,Y = np.meshgrid(t,x)
 	plt.figure()
-	cp = plt.contourf(X,Y,Phi_of_t)
+	cp = plt.contourf(X,Y,Phi_of_t) #, vmin = -0.14, vmax = 0.04 is not a good idea, because the potiantials differs too much in magnitude
 	plt.colorbar(cp)
 	plt.xlabel('time (s)')
 	plt.ylabel('cortical depth (mm)')
-	plt.title(name +'  $ \Phi$ (mV)')
+	plt.title('$ \Phi(x,t)$ in mV (' + name + ')')
 	plt.savefig(name +'Phi_of_t', dpi =225)
 #	print(x)
 	plt.show()
