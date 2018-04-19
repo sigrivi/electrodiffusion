@@ -22,16 +22,21 @@ from electrodiffusion import makeAkses # (parameters):return(t,x)
 if __name__=="__main__":
 
 
-	c_K  = .001*np.load("data_cK.npy")
-	c_Na = .001*np.load("data_cNa.npy")
-	c_Ca = .001*np.load("data_cCa.npy")
-	c_X  = .001*np.load("data_cX.npy")
+	K  = np.load("data_cK.npy")
+	Na = np.load("data_cNa.npy")
+	Ca = np.load("data_cCa.npy")
+	X  = np.load("data_cX.npy")
 
-	N_t = 10000          # t_final = N_t * delta_t
-	delta_t = 1/1000      # delta_t in seconds
-	delta_x = 1/10000     # delta_x i meters
-	N_x =  len(c_K)
-	x_values = np.linspace(0,14,num = 15)
+	N_t = 1000          # t_final = N_t * delta_t
+	delta_t = 1/100      # delta_t in seconds
+	delta_x = 1/100000     # delta_x i meters
+	N_x =  len(K)*10
+	x_values = np.linspace(0,14,num = 15)*10
+
+	c_K = 0.001*np.interp(np.linspace(0, N_x-1, num = N_x), x_values, K)
+	c_Na = 0.001*np.interp(np.linspace(0, N_x-1, num = N_x), x_values, Na)
+	c_Ca = 0.001*np.interp(np.linspace(0, N_x-1, num = N_x), x_values, Ca)
+	c_X = 0.001*np.interp(np.linspace(0, N_x-1, num = N_x), x_values, X)
 # valence: 
 	zNa = 1                                         
 	zCl = -1
@@ -67,9 +72,13 @@ if __name__=="__main__":
 # Delta K⁺ - Delta Cl⁻ = 0 | Delta Na⁺ = 0
 	Ions4 = [Ion(np.ones(N_x)*.150, DNa, zNa, 'Na+'), Ion(c_K, DK, zK, 'K+'), Ion(c_K + .150, DCl, zCl, 'Cl-' )]
 
+	Ions5 = [Ion(c_Na, DNa, zNa, 'Na+'), Ion(np.ones(N_x)*.003, DK, zK, 'K+'), Ion(c_Na, DCl, zCl, 'Cl-')]
+
+	Ions6 = [Ion(c_Na, DNa, zNa, 'Na+'), Ion(-c_Na+.153, DK, zK, 'K+'), Ion(np.ones(N_x)*.153, DCl, zCl, 'Cl-')]
+
 # 
-	Models = [Ions0, Ions1, Ions2, Ions3, Ions4]
-	Names = ['full model', '$\Delta K^+ + \Delta Na^+ = 0$', '$\Delta K^+ + \Delta Na^+ = \Delta Cl^-$', '$\Delta K^+ +0.5 \Delta Na^+ = 0.5\Delta Cl^-$', '$\Delta K^+ - \Delta Cl^- = 0$']
+	Models = [Ions0, Ions1, Ions2, Ions3, Ions4, Ions5, Ions6]
+	Names = ['full model', '$1\!:\!1\ K^+\!/Na^+$', '$1\!:\!1\ K^+\!/(Na^+-Cl^-)$', '$1\!:\!(1/2)\ K^+\!/Na^+$', '$1\!:\!1\ K^+\!/Cl^-$', '$1\!:\!1\ Na^+\!/Cl^-$', '$1\!:\!1\ Na^+\!/K^+$']
 
 
 #	sys.exit()
@@ -82,18 +91,27 @@ if __name__=="__main__":
 		el_sum = electroneutrality(M, N_x)
 		print(j,np.amax(el_sum))
 		j+= 1
-	location = 0 #NB: this is only used for coparing PSDs at different compartments!
+	location = 0 #NB: this is only used for comparing PSDs at different compartments!
 	for M in Models:
-		Phi_of_t = solveEquation(M, lambda_n, N_t, delta_t, N_x, delta_x)
+		Phi_of_t, c_of_t = solveEquation(M, lambda_n, N_t, delta_t, N_x, delta_x)
 		Phi_of_t = Phi_of_t*Psi* 1000
 		Phi.append(Phi_of_t)
 #		f, psd, location = makePSD(Phi_of_t, N_t, delta_t)
-		f, psd = signal.periodogram(Phi_of_t[location,:], 1/delta_t)
-		print(i,location)
-		PSD[i,:] = psd
-		plt.plot(np.log10(f[1:-1]), np.log10(psd[1:-1]), label = Names[i])
-		plt.legend()
+#		f, psd = signal.periodogram(Phi_of_t[location,:], 1/delta_t)
+#		print(i,location)
+#		PSD[i,:] = psd
+#		plt.plot(np.log10(f[1:-1]), np.log10(psd[1:-1]), label = Names[i])
+#		plt.legend()
+		plt.plot(np.linspace(0, (N_x-1)/100, num = N_x-1), Phi_of_t[:,0], label = Names[i])
 		i += 1
+	plt.title('$\Phi (x,0)$')
+	plt.xlabel('cortical depth in mm')
+	plt.ylabel('$\Phi$ in mV')
+	plt.legend()
+
+	plt.savefig('initial_conditions', dpi=500)
+	plt.show()
+	sys.exit()
 	plt.title('PSD of the diffusion potential')
 	plt.xlabel('$log_{10}(frequency)$') # frequency is measured in Hz
 	plt.ylabel('$log_{10}(PSD)$ ') # PSD is measured in (mV)²/Hz
