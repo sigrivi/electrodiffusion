@@ -22,25 +22,23 @@
 
 
 \section{Introduction}
-All of our thougths, feelings and actions are a complex ensemble of electrical signals in the brain. The signals are generated and transported via specialized cells, the neurons.
-*something about how the neuron generates action potentials*
- The neuroscientists way of understanding our brain, is to measure aspects of these signals. For some cells, it is possible to measure the electric potential inside the cell. In vivo, it is more common to measure the potential outside the neuron, in what is called the extracellular space. How to interpret these measurements, and what kinds of processes we find the traces of, is an ongoing area of investigation. Theses signals are classified as Multi Unit Activity or Local Field Potential. The LFP is defined as the low-frequency (1-500 Hz) part of the extracellular potential recorded by an extracellular electrode inserted into the brain, while the MUA the high frequancy part (500 Hz and above).(*Einevoll*) The MUA is the extracellular signature of action potentials, and contains information of a handful of the surrounding neurons. In contrast, the LFPs reflect the synaptic input of the neurons. The LFP part of the signal is hard to interpret. Current Soruce Density is a theory used to relate the LFPs to what is going on inside the neurons. The essence of CSD theory is that an extracellular potential must be caused by currents going into or out of cells, and that the currents in the exctracellular space are field currents alone. Specifically, diffusive currents are neglected. 
+All of our thougths, feelings and actions are a complex ensemble of electrical signals in the brain. The signals are generated and transported via specialized cells, the neurons. The neuroscientists way of understanding our brain, is to measure aspects of these electrical signals. For some cells, it is possible to measure the variations in the electric potential inside the cell. In the 1950's Hodgkin and Huxley did pioneering work on this field, laying the foundation of our current understading of the neuron by performing in vitro experiments on single neurons. Now, the interaction of neurons in large networks is a major thing. Understanding such networks give us deeper insight in processes like learning, sleep and the recovery after brain damage. It helps us understand mental illnesses and age-related mental disorderer. To understand the functioning of networks, in vivo measurements are favorable. Here, both invasive and nonivasive methods are used. The benefits of the noninvasive methods are obvious, but for a detailed study of the neuronal signalling, measurements from within the skull are required.  One common teqchnique is to insert electrodes into the brain, and measure the electrical potential outside the neurons, in what is called the extracellular space. How to interpret these measurements, and what kind of neural activity we find the traces of, is a research area with many branches. 
 
-Neuronal activity involves ionic exchange with the extracellular space, which might change the ionic concentration in the vicinity of the neurons, thereby producing an ionic concentration gradient. When there is a concentration gradient, there migth also be diffusion. Under what circumstances does diffusion contribute to the CSD? 
-This question was adressed by Gratiy et al.
-In Gratiy2017, Gratiy et al. gives the mathematical framework for the relationship between electric currents through the neural membrane and the extracellular potential. They argue that the diffusion current can contribute to the CSD of the extracellular potential at frequencies less than a few Hertz. The  estimate on the effects of extracellular diffusion on the LFP recordings was done with data from two independent experiments. 
+The extracellular potentials are varying with time, and an analysis of the signals in terms of the frequencies is advantageous when it comes to finding connections between the measured signal and the behaviour of the neurons. One way to represent the signal in terms of the frequecy is to find the Power Spectrum Density of the ignal (PSD).  The Local Field Potential (LFP) is defined as the low-frequency part of the extracellular potential recorded by an extracellular electrode inserted into the brain. The theory of Current Source Density (CSD) relates the LFPs to what is going on inside the neurons. The essence of CSD theory is that an extracellular potential must be caused by currents going into or out of cells, and that the currents in the exctracellular space are field currents alone, that is, they are caused by potential differences. 
 
-\begin{enumerate}
-\item  Recorded extracellular potential in vivo from the
-mouse primary visual cortex was used for estimating the CSD under the assumption that trans-
-membrane currents were the sole contributors to the extracellular poten-
-tial.
-\item Extracellular $K^+$ transients in the mammalian cortex from previously published data was used to estimate the apparent CSD resulting from diffusion. Here, Gratiy et al. used the assumption that $\Delta [K^+] + \Delta [Na^+] = 0$, which implies that the divergence of the diffusive currents can be found from meausrements of $[K^+]$ alone.
-\end{enumerate}
+Neuronal activity involves ionic exchange with the extracellular space, which might change the ionic concentration in the vicinity of the neurons, thereby producing an ionic concentration gradient. When there is a concentration gradient, there might also be diffusion. Because ions carry charge, ionic diffusion will cause a diffusive current. In standard CSD theory, the diffusive currents are neglected. Resent studies done by Gratiy et al. and Halnes et al. suggests that for large concentration gradients the diffusive currents must be accounted for. 
 
-In my work, I am going to use a similar approach. I am going use LFPs and ionic concentrations from previously published experiments. I will use the ionic concentrations profiles in a simulation of the diffusion potential, and compare the diffusion potential to the LFPs found experimentally. My work differs from that of Gratiy et al. in that Gratiy et al. have used the initial K+ profile to estimate the apparent CSD resulting from diffusion, and then assumed an exponential decay of this CSD. I am going to model the diffusion potential itself. 
+Gratiy et al.(Gratiy2017,) gives the mathematical framework for the relationship between electric currents through the neural membrane and the extracellular potential. They argue that the diffusion current can contribute to the CSD of the extracellular potential at low, but still measurable frequencies. The estimate on the effects of extracellular diffusion on the LFP recordings was done with data from two independent experiments. First, recorded extracellular potential in vivo from the mouse primary visual cortex was used for estimating the CSD under the assumption that transmembrane currents were the sole contributors to the extracellular poten-
+tial. Then, extracellular $K^+$ transients in the mammalian cortex from previously published data was used to estimate the apparent CSD resulting from diffusion. 
 
-The modeling of the diffusion potential is previously done by Halnes et al. (*reference*). They have simulated the neurodynamics of 10 pyramidal cells centered at the same depth level of the tissue, and the transmembrane output of all ionc species was recorded. The resulting dynamics of ionic concentration were computed with the KNP-formailsm (INSERT REFERENSE). They concluded that the diffusive currents had no impact on the fast temporal scale. On the slow temporal scale, however, the diffusive currents induced shifts in the extracellular potentials, and changed the power spectra of local field potentials. Halnes et al. have two proposals. 1) The simplified decoupoled model illustrated that the ECS diffusion gave rise to a $1/f^2$ contribution to the PSD. 2) the crossing point between the PSD obtained from diffusive process alone and the PSD obtained from neurodynamics when no diffusion was included may serve as a crude estimate of the maximum frequencies for which diffusion can be axpected to influence the PSD. In my work, I will investigate these proposals further. I  have made a model to simulate the diffusion potential due to a given concentration profile, and found concentration profiles measured in vivo. Then, I have looked at the PSD of the potential to see if it follows the proposed power law. Secondly, I have tried to look at the power of the low frequencies, and compare it to PSDs of recorded of local field potentials, to see if the powers are of the same magnitude. According to the second proposal, there migth be a frequency range where the power of the diffusion potenitial is of the same magnitude as the recorded ones. 
+In my work, I will dig deeper into this matter. I am going use LFPs and ionic concentrations from previously published experiments. I will use the ionic concentrations profiles in a simulation of the diffusion potential, and compare the diffusion potential to the LFPs found experimentally. My work differs from that of Gratiy et al. in that Gratiy et al. have used the initial K+ profile to estimate the apparent CSD resulting from diffusion, and then assumed an exponential decay of this CSD. I am going to model the diffusion potential itself. 
+
+The modeling of the diffusion potential is previously done by Halnes et al. (*reference*). They have simulated the neurodynamics of 10 pyramidal cells centered at the same depth level of the tissue, and the extracellular potential and the transmembrane output of all ionc species were recorded. Then  dynamics of ionic concentration were computed with the KNP-formailsm *reference*. Then, power spectrum densisties were calculated. They concluded that the diffusive currents had no impact on the fast temporal scale. On the slow temporal scale, however, the diffusive currents induced shifts in the extracellular potentials, and changed the power spectra of local field potentials. Halnes et al. have two proposals. 1) The simplified decoupoled model illustrated that the ECS diffusion gave rise to a $1/f^2$ contribution to the PSD. 2) the crossing point between the PSD obtained from diffusive process alone and the PSD obtained from neurodynamics when no diffusion was included may serve as a crude estimate of the maximum frequencies for which diffusion can be axpected to influence the PSD. 
+
+
+This thesis is an attempt to answer the proposals of Halnes et al. I have modelled the extracellular diffusion by implementing a numerical scheme (*section*) for solving the 1D  Nerst--Planck equation (*section*). I have found recordings of extracelleular ionic concentrations, and done a study of how to make ionic concentration profiles for more than one ion species when the data sets do not. I have used the ionic profiles to calculate the diffusion potential, and I have compared the PSD of the diffusion potential to the PSD of a recorded LFP. Contrary to the results of Gratiy et al and Halnes et al., I do not find reason to believe that non-pathological concentration gradients does produce a diffusion potential which affects the LFP. Some pathologigal conditions migth give extracellelular K+ concentrations which are 10 times larger. I have modelled the diffusion potential for such an extreme case, to see if diffusion migth affect the LFP. 
+
+
 
 ****
 
@@ -49,17 +47,6 @@ The modeling of the diffusion potential is previously done by Halnes et al. (*re
 If my results disconfirms these proposals, I conclude that the assumtion of the volume conductor theory (diffusive currents are negligible) is valid. 
 (I need to treat "model assumtions" seriously at some later stage)
 Further study from Halnes2016: it is unclear wheter the slow components of the PSD would be influenced by choise of population size and model dimensionality. Can I find anyone who have studied this???
-
-
-
-
-*****
-
-
-An insigth from Gratiy2017: When diffusion currents cannot be
-neglected, one must estimate them independently and
-subtract them from the Laplacian to arrive at the CSD of membrane
-currents.
 
 Check this out: On the
 other hand, several slower oscillatory patterns exist with their main
@@ -72,14 +59,32 @@ Steriade et al., 1993).
 My journey into the field of electrodiffusion started with the reading of Halnes2016 and Gratiy2017. I think these articles are a natural entrance to the work I will present in this thesis, and I will therfore try to outline the most relevant ideas in the following. In my work, I rely on experimental data for the ionic corcentrations. Dietzel1982 provides good data sets, as well as an insight in how to construct models based on limited data sets. 
 
 
-****
-There are many mechanisms in the extracellular space which work to keep the gradients low, but in some cases they might not be efficient enough. Diffusion helps evening out the concentration gradients. Because ions carry an electical charge, the diffusion of ions produces an electric current. The diffusive current is normally neglected. In my work, I'm going to use measured concentration gradients in the extracellular space in the cortex, and investigate the diffusion potential that migth be caused by such gradients.
 \section{Theory}
 
-\subsection{The Cerebral Cortex}
-\subsection{Local Field Potentials}
-\subsection{Current Source Density}
+\subsection{Layered structures in the brain}
+(wikipedia about cortex facts)
+The cerebral cortex is the largest part of the mammalian brain. It is has a sheetlike structure. The surface area and the tickness of the cortex depends on the animal species. In humans it has a area of 0.12 m2, and a thickness of 2.3 - 2.8 mm. The cortex is confined to the volume of the skull, in humans and other large mammals, the sheet is folded, giving the brain the characteristic apparance we recognice from the popular culture \ref{fig:spongebob} and textbooks.  The cortex has a layered structure. See figure. Each layer is occupied with some specific types of neurons. For example, the internal pyramidal layer is mainly occupied with large pyramidal neurons with their axons traveling down, while the upper cortical area contains small pyramidal neurons an stellate neurons. The cortex is also devided into functional areas that serve various sensory, motor, and cognitive functions. As a consequence, one particular input, migth give stimuli to one particular type of neurons, making a responce that vary across the cortical depth, but is the same within this functional area. This behaviour encourages measurements of laminar profiles of the extracellular potentials and ionic concentration gradients.  
 
+
+\begin{figure}[!tbp]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{spongebob.png}
+  \end{minipage}
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{cortex.jpg}
+  \end{minipage}  
+   \caption{Left: Spongebob with his brain exposed, featuring the folded sheetlike structure of the cortex. Rigth: a schematic drawing of the human cortex and its functional areas.}
+  \label{fig:spongebob}
+\end{figure}
+
+\subsection{Electroneutrality, and action potentials}
+The principle of electroneutrality states that in bulk, every solution is electrically neutral. 
+\subsection{Local Field Potentials}
+The Local Field Potentials (LFP) is defined as the low-frequency part of the electrical potential recorded by an extracellular electrode
+inserted into the brain. The LFP appears to predominantly reflect the synaptic inputs to the neurons, in contrast to the Multi Unit Activity (MUA) which is the high-frequancy part of the potential and  which contains information about the firing of action potentials of a handful of the
+surrounding neurons.  Current-source density (CSD) analysis of multiple LFP recordings across well-organized
+layered neural structures such as cortex, cerebellum, and hippocampus allows for a more local measure of neural activity than the LFP which is easier to interpret in terms of the activity in the underlying neural circuits.
 \subsection{What is electrodiffusion?}
 
 Diffusion is a process caused by the random walk of particles when a concentration gradient is present. There will be a particle flux towards lower concentration. The flux is determined by the concentration gradient, but also by the diffusion coefficient of the particles. A high diffusion cofficient will even out the concentration gradient more rapidly. The concentration dynamics for a purely diffusive process is given by Fick's law:
@@ -134,19 +139,49 @@ Action potentials are generated by an ionic exchange between the neurons and the
 
 All ionic species whose concentrations varies with cortical depth should be represented in the electrodiffusive model. In Halnes2016 they included four ion species, namely $K^+$, $Na^+$, $Ca^{2+}$ and an unspeciefied anion $X^-$ in their simulations.
 
+\subsubsection{Previously published exctracellular concentration recordings}
+In my work, I rely completely on previously recorded ion concentrations. I present the main contributers here in the theory section, because I think their findings have an impact on hwo to model the inital concentrations. 
+
+\begin{itemize}
+\item Dietzel et al. have measured extracellular concentrations of $K^+$, $Na^+$ and $Ca^{2+}$ during repetative stimulation and stimulus-induced self-sustained neuronal afterdis-
+charges (SAD) in the sensimotori cortex of cats. They have not been able to measure more than two ion species simultaneously. In their experiments, they have found that the changes in $[Cl^-]$ were slow, and often not observable before after the stimulation period. Simultaneous measurements of $[K^+]$ and $[Na^+]$ at a depth of 1000 $\mu$m revealed that the increase in $K^+$ had the same time course as the decrease in $Na^+$ for the first 10 s. At higher cortical levels, there was a fast $Ca^{2+}$ decrease which inferred with the measurements, but when this were corrected for they found reason to believe that there was a 1:1 K+/Na+ exchange at all cordical levels during the stimulation period. Dietzel et al. present many data sets, of which he $Na^+$ and $Ca^{2+}$ measurements have the most measuring points. 
+
+\item Nicholson et al. have measured extracellular $K^+$ and $Ca^{2+}$ in the cerebellar cortex of cats. The stimulation had a duration of 30 s, for frequencies 5, 10 and 20 Hz. They found that that the major [K+] changes occur superficially but that some [K+], increase persists at all levels. This is expected, since local surface stimulation excites a superficial beam of parallel fibers and Purkinje cell synapses. The [Ca2+] changes were more localized to the superficial regions. Nicholson et al. outlines the difference in the diffusion constant as a possible explaination.
+
+\item Cordingley and Somjen have measured extracellular K+ in the neocortex and spinal cord of cats, and studied the half-decay time of the K+ transients. The observed half-decay times of
+[K+] transients were more than a hundred times shorter than those calculated for
+diffusion either in spinal cord or in cortex. 
+
+\item Halnes et al. have simulated a network of 10 pyramidal neurons, and kept track of the ionic output. Figure is the ionic output after 42 s of activity. 
+\end{itemize}
+
+
+\begin{figure}[!tbp]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{dietzel.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{finfugl.jpg}
+  \end{minipage}
+    \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{nicholson.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{cordingley_somjen.png}
+  \end{minipage}
+  \caption{Previously published extracellular concentration recordings A) $Na^+$ and $Ca^{2+}$ profile recorded from sensimotori cortex of cats by Dietzel et al. Stimulation: 15-20 Hz for 10 s. B) $[K^+]$ and $Ca^{2+}$  recorded from cerebellar cortex of cats by Nicholson et al. Frequencies associated with profiles marked on upper abscissa. Stimulation time is 30 s. Maximum deviation from baseline was reached after 10 s, solid dots and squares/the outer curves. C) ionic output simulated by Halnes et al., using 10 pyramidal neurons. D) $K^+$ recorded from visual cortex of cats by Cordingley and Somejen. Stimulation time 1 s. Both surface stimulation and VPL(ventral posterolateral nucleus) stimulation.
+}
+  \label{fig:data sets}
+\end{figure} 
+
+
 \subsubsection{Initial concentration profiles based on recorded ionic concentrations}
- In Gratiy2017, experimental recordings of ionic concentrations were used. Here, the  measurements included only a depth profile of $K^+$, and the assumtion  $\Delta [K^+] + \Delta [Na^+] = 0$ was used to make a depth profile for $Na^+$. These two ion species were concidered the sole contributors to the diffusive currents. This assumtion finds further support in Dietzel1982. Here, Dietzel et al. are measuring extracellular $[K^+]$ and $[Na^+]$ during repetative stimulation at cortical depths bewteen 0 and 1200 mm. During the stimulation period $[Na^+]$ always showed an initial fast decrease in all cortical layers. At a depth of about 1,000 $\mu$m, the time courses of [K+] and [Na+] -signals were directly related to one another (Fig. 5 in Dietzel1982). This means that the initial close correspondence of [K+] and [Na+] further confirms the concept of a 1 : 1 Na+/K + exchange at this depth.In the upper cortical layers, there is a Ca2+ interference, so the correspondence is not direct, but when correcting for Ca2+, there is an inintial 1 : 1 Na+/K +
-exchange also in these layers.
-
-
-In the upper cortical layers ther was also fast initial $Ca^{2+}$ increase. When this was corrected for(the thing for measuring na also measures ca2+, in the upper layers there is a lot of Ca2+ going out of the system. Some of the measured na+ is in reality ca2+), the decrease in $Na^+$ was coherent with a 1:1 Na+/K+ exchange in these layers, and the minimum was usually reached before the end of the 10 s of stimulation. I'm going to use the minimum $[Na^+]$ at different cortical layers as an initial concentration profile in my simulations.  They have also measured the kinetics of $[K^+]$ and $[Na^+]$.   These findings will be of mayor importance to me, as I will assume that $\Delta [K^+] = - \Delta [Na^-]$ for the initial concentration profiles. Also, they find that that increase in $[Cl^-]$ is much slower than that of K+ and Na+, so it makes sense using baseline $Cl^-$ as an initial $Cl^-$ profile. 
-
-Also, one would like to use measured concentration values. Most of the datasets of spatial ionic concentration profiles that I have found contain only one ion species.
-The simulation of the diffusion potential in the extracellular space requires at least three ion species. $K^+$ and $Na^+$ are the ion species with the largest concentration shifts, and these ion species must be included. A negative ion is necessary for the maintainment of electroneutrality throughout the simulation. In most experiments, only $K^+$ or $Na^+$ gradientes are measured. This calls for an assumtion about the other ions. Dietzel et al. have measured $\Delta [K^+]$ and $ \Delta [Na^+] $ simultaneously. The kinetics of these ion species give reason to believe that the rise in $K^+$ gives an equal decrease in $Na^+$ during the stimulation period, and that 
+As we saw in the prevoius section, I have not succeeded in finding spatial profiles with more than two simultaneously measured ion species. This calls for assumtions about the other ion species. Primarly I have to decide how many ion species should be included. Na+ and K+ are the ion species which experience the largest concentration shifts, because these ions are the key ions in the generation of the action potentials. The model have to include Na+ and K+. Cl- is the most abundant anion in the extracellular space, and it is necessary in order to make an electroneutral bulk solution. Ca2+ is an important signalling ion, and its relative concentration variations are large, but the concentration variations are approximately a tenth of the Na+ and K+ variations (see figure \ref{fig:data sets}. Not all the data sets contain information about $Ca^{2+}$, and I think, as a first move, it is safe to neglect it. What I want to do, is to find a way to construct the initial profiles of K+, Na+ and Cl- that can be applied to the data sets of *section*. For their estimates, Gratiy et al. used the data set of figure \ref{fig:data sets} D. They assumed that $\Delta [K^+] + \Delta [Na^+] = 0$ to make a depth profile for $Na^+$. An implicit assumtion is that Cl- is at baseline all the time, and that Na+ and K+ two ion species were concidered the sole contributors to the diffusive currents. This assumtion finds further support in Dietzel1982. , who found that during the stimulation period, the 1:1 Na+/K+ exchange in all cortical layers. This was further backed up by measurements of [Cl-]. The dynamics of Cl- were slower, the increase in Cl- was firstly observed after the stimulation period. It makes sense using baseline $Cl^-$ as an initial $Cl^-$ profile. 
+To sum it up: if our measuremets are limited to only K+ or Na+, the most reasonable assumption about the other ions are:
  $$\Delta [K^+] =  -\Delta [Na^+] \quad \land \quad \Delta [Cl^-] =0$$ 
-is a good  model for the initial ion concentration. In the subsequent, I will refere to this model as the $1\!:\!1\ K^+\!/Na^+$ model.
-
-
 
 
 \subsection{Electrodiffusion in the extracellular space}
@@ -270,8 +305,24 @@ The solver \texttt{solveEquation(Ions, lambda\_n, N\_t, delta\_t, N, delta\_x)} 
 
 
 $x_{max} =N_x \Delta x$ and $t_{final} = N_t \Delta t$, where $x_{max}$ is the cortical depth in meters and $t_{final}$ is the total simulation time.
-\subsection{Initial conditions}\label{Initial conditions}
-The solution presented in section \ref{Solving the equation} requires initial conditions. The initial potential is calculated from the initial concentrations, and the initial concentrations are used to calculate the concentration at the next time step.
+\subsection{Initial conditions}\label{Initial conditions: Ion concentration profiles from experiments}
+The solution presented in section \ref{Solving the equation} requires initial conditions. The initial potential is calculated from the initial concentrations, and the initial concentrations are used to calculate the concentration at the next time step. In *section* I presented some arguments for the $1\!:\!1\ K^+\!/Na^+$ relation. Other simplifications of the ion balance migth be equally good. To investigate what impact the initial ion balance has on the diffusion potential, I have tested some scenarioes where only the initial $[K^+]$ is known, and we have to make an educated guess about the other ions.
+\begin{itemize}
+	\item[]\underline{Scenario 1}: The rise in $K^+$ is balanced with an equal decrease in $Na^+$
+	  $$\Delta [K^+] = -\Delta [Na^+] \quad \land \quad \Delta [Cl^-] =0$$
+	\item[]\underline{Scenario 2}:  The rise in $K^+$ is shared between $Na^+$ and $Cl^-$
+	$$\Delta [K^+] = -\frac{1}{2} \Delta [Na^+] +\frac{1}{2} \Delta [Cl^-] $$ 
+		\item[]\underline{Scenario 3}:  The rise in $K^+$ is balanced with an equal increase in $Cl^-$
+	  $$\Delta [K^+] = \Delta [Cl^-] \quad \land \quad \Delta [Na^+] =0$$
+	  \item[]\underline{Scenario 4}:  In studies of speading depression *reference*, I has been shown that the rise in $Na^+$ is even larger than the rise in $K^+$, and that the charge is balanced by $Cl^-$. The ratioes between the ion species makes the foundation for the 4. scenario:
+	$$\Delta [K^+] = -2 \Delta [Na^+] \quad \land \quad \Delta [K^+] =  -\Delta [Cl^-] =0$$ 
+	\item[]\underline{Scenario 5}: In some experiments, the concentrations of two different ion species are known. For this reason I have included a 5th scenario. Here, I assume that both $[K^+]$ and $[Na^+]$ are known, and make an assumtion about $Cl^-$
+	$$\Delta [K^+] + \Delta [Na^+] = \Delta[Cl^-] $$
+\end{itemize}
+
+How am I to evaluate which scenario decsribes the ionic concentration in the extracellular space best? I have used the $[K^+]$ from the Halnes simulations to construct the initial ion concentration profiles for the five scenarios, and calculated the diffusion potential for each of them. I have plotted the potential at $t=0$ togheter with the diffusion potential resulting for the full Halnes model. 
+
+
 \subsubsection{The two-ion system}
 The two-ion system is a constructed system; it is not related to processes in the brain. I have used it to make sure that the solver works properly, by comparing the purely diffusive system of *section*\ to the two-ion system of *section*. I used the simplest initial condition i could think of: 
 $$c(x,0) =c_0 +  \Delta c_{max}\sin{\frac{\pi x}{L}}$$
@@ -279,16 +330,8 @@ Then, there is no need for a fourier expansion, as $k=1$ and $A_1 = \Delta c_{ma
 \begin{equation*}
 c(x,t) =c_0 + \Delta c_{max} \sin \frac{ \pi x}{L}\cdot e^{-D\pi^2 t /L^2}
 \end{equation*}
-\subsubsection{Ion concentraton profiles from experiments}
- I will use the $1\!:\!1\ K^+\!/Na^+$ model to find the diffusion potential based on four different data sets: the measurements of extracellular $K^+$ in Cordingley1978, Dietzel1982 and Nicholson, together with data for Halnes2016. The measurements from Cordingley1978 were used in Gratiy2017, and they also used the $1\!:\!1\ K^+\!/Na^+$ model to construct the $Na^+$ profile. 
 
 
-Other simplifications of the ion balance migth be equally good. The rise in $K^+$ could be completely compensated for by an equal increase in $Cl^-$, and we have an $1\!:\!1\ K^+\!/Cl^-$ model:
-  $$\Delta [K^+] = \Delta [Cl^-] \quad \land \quad \Delta [Na^+] =0$$
-These are the two extreme cases. I will also include an intermediate model, the $1\!:\!\frac{1}{2}\ K^+\!/Na^+$ model:
- $$\Delta [K^+] = -\frac{1}{2} \Delta [Na^+] +\frac{1}{2} \Delta [Cl^-] $$ 
- In section \ref{The K/Na assumtion} I am going to investigate the three scenarioes, by running the simulation with different initial conditions. A pressing question is: How am I able to evaluate which results have the best agreement with reality? 
-Halnes et al. argues that a model with four ions, $K^+$, $Na^+$, $Ca^{2+}$ and an unspecified anion $X^-$ is enough to describe the extracellular dynamics. We do not have sufficient information to make a four ion model from experiments. I have used the Halnes data to get a better understanding of what kind of information we renounce when we use a model with only three ion species, and to evaluate which of the three proposed models that has the best agreement with the four-ion model.
 \subsection{The solution and its power spectrum density}
 A presentation of the diffusion potential is found in section \ref{diffusion potentials}, where I have used a contour plot of $\Phi(x,t)$ to illustrate the developement of the potential with time. The potential, and the powers of the potential are not the same for all cortical depths.
 To find the power spectrum density of the diffusion potential, I used \texttt{periodogram}  from the \texttt{signal} class in Python. The input of \texttt{periodogram} is the sampling frequency $f_s = 1/\Delta t$ of the signal. It returns a vector of frequencies, and the PSD of the signal.
@@ -340,52 +383,25 @@ $\Delta t$/$\Delta x$ & 0.1 mm & 0.01 mm & 0.001 mm  \\
 \subsection{The $\Delta [K^+] = - \Delta [Na^+] $ assumtion}\label{The K/Na assumtion}
 
 \begin{figure}
-  \includegraphics[width=\linewidth]{initial_conditions.png}
+  \includegraphics[width=\linewidth]{init_c_scenarioes.png}
   \caption{The diffusion potential resulting from different models for the initial ion concentration profiles}
-  \label{fig:initial_conditions}
+  \label{fig:init_c_scenarioes}
 \end{figure}
 
-Figure \ref{fig:initial_conditions} shows the diffusion potential at $t=0$ for the initial concentration profiles described in section \ref{Initial conditions}. The full model and the model using known $[K^+]$ and $[Na^+]$ have similar shape for all cortical depths, the full model giving a sligthly larger potential. Of the three models constructed from known $[K^+]$, the $1\!:\!1\ K^+\!/Na^+$  model is colses to the full model for all cortical depths. The $1\!:\!1\ K^+\!/Cl-$ model produces a positive potential. This is because $Cl^-$ has a larger diffusion coffeicient than $K^+$. The potential is much smaller than the others, because $D_{Cl}$ and $D_K$ are close to each other. For a population of neurons with ionic output similar to that of the Halnes model, the $1\!:\!1\ K^+\!/Na^+$ model is the most suitable. The difference is largets in the higher cortical layers, because in this region there is less $K^+$ exchange between neurons and extracellular space.  If the extracellular increase in $K^+$ is compensated by an increase of $Cl^-$, the potential is smaller.      there is a discussion on what assumtion to make about the initial ion concentration profiles when the experimental data set contains values of only one ion species. Here, I will do two things: 1) compare the diffusion potentials of the three models. To do so, I will use the $K^+$ profile from the Halnes data. Because the diffusion potential decays with time, it is largest in the beginning of the simulation. I will compare $\Phi(x,0)$ for the three three-ion models to $\Phi(x,0)$ for the full model. 
+Figure \ref{fig:init_c_scenarioes} shows the diffusion potential at $t=0$ for the five scenarios described in section \ref{Initial conditions: Ion concentration profiles from experiments}. The blue line (with legend 0) is the diffusion potential calculated from the full model with data from the Halnes2016 simulation. The potential from the full model and of scenario 5 (with known $Na^+$ and $[K^+]$) are almost the same for all cortical depths. This indicates that it is sufficient to know the concentrations of two ion species to get a satisfying model of the diffusion potential. For all scenarios, the potential is largest at a cortical depth of approximately 1.2 mm. This correspons to the soma compartment of the neurons in Halnes simulations. The soma region has the largest ionic exchange with the extracellular space, hence the large diffusion potential. For cortical depths between 0.8 and 1.3 mm, scenario 1 also seems give a good agreement with the full model. In this region, the ionic exchange consist mainly of $K^+$ and $Na^+$. In the higher regions, the difference is larger, because the $K^+$ efflux from the neurons in this region is small. The potential of scenario 2 has the same shape as that of scenario 1, but a smaller amplitude. The smaller amplitude can be explained by the diffusion coefficients. The diffusion coefficients of $K^+$ ($D_K = ...$) and $Cl^-$ ($D_Cl$=...) are much closer to each other $D_K$ and $D_Na$. When half of the $Na^+ $ is replaced with $Cl^-$, half of the $K^?$ is neutralized by $Cl^-$, effectively halving the initial concentration deviation. The result is that scenario 2 has poorer fit than scenario 1, for all cortical depths. In scenario 3, we see the consequences of the little difference between $D_{Cl}$ and $D_K$. Here, the diffusions potential is ???\% of the full model potential. A pecularity of this scenario is that the potential is positive. The explaination lies again in the diffusion coeficients. $D_{Cl}$ is larger $D_K$, so that the negative $Cl^-$ escapes faster. This potential is much smaller than the others, because  are close to each other.
+
+Of the three scenarioes (1,2,3) based on a known $K^+$ concentration, scenario 1 is the most suitable for populations of neurons with ionic output similar to that of the Halens model.
+
+Scenario 4 stands out. The amplitude of the diffusion potential in the soma region is more that twice the amplitude from the full model. This is caused by the initial $Na^+$ concentration. In the case of spreading depression, the 1:1 Na+/K+ model underestimates the diffusion potential. 
+
+The main concern of this thesis is not the spatial shape of the diffusion potential, but its temporal aspects, represented by its PSD. The amplitude of the potential vary axross the cortical depth. I have chosen to let the depth at which the PSD is largets to be representative. In *figure* are the PSDs of the potentials at $x=1.2$ mm and $x=0.2$ mm.   According to figure \ref{fig:init_c_scenarioes}, we shoud exepct the largest powers at $x=1.2 mm$ ad the largest difference between the full model and scenario 1 seems to be at $x=.2$
 
 
-
-In the previous section, I made use of the $\Delta [K^+] = - \Delta [Na^+] $  assumtion to make the initial concentration profiles. How good is this assumtion? To be more specific: If a model with three ions is enough to describe the system, is it so that the $1\!:\!1\ K^+\!/Na^+$ model is the best? In most cases we are forced to use only three ions, but how will the introduction of a fourth ion, $Ca^{2+}$ affect the system? To adress these issues, I have used the data from Halnes' simulations. The results are presented in figure \ref{fig:Ca_contribution}. Here, five different PSDs are shown. The blue line is the diffusion potential resulting from a four-ion model. The green line is a model constructed from the halnes data. Here, I have used $K^+$ and $Na^+$ from Halnes2016, and balanced it with $Cl^-$. I named it the $1\!:\!1\ K^+\!/(Na^+-Cl^-)$ model. The others are variations of the three-ion model. 
-The difference between the full model and the $1\!:\!1\ K^+\!/(Na^+-Cl^-)$ model is very small(-0.040 log units). So is the difference between the full model and the $1\!:\!1\ K^+\!/Na^+$  model ( 0.044 log units) . Including $Ca^{2+}$ does not affect the PSD of the diffusion potential very much. Also, the additional knowledge about the $Na^+$ concentrations is not important, according to this model. Which is a relief, I can safely use only the $K^+$ profile and get a good estimate of the PSD of the diffusion potential. The two other models for the intial ion balance are far off. Why is that?
+********
 
 
  The diffusion constant of $K^+$ and $Cl^-$ are quite close to each other ($D_K = 1.96\cdot 10^{-9}$ and $D_{Cl} = 2.03\cdot 10^{-9}$), while the diffusion coefficient of $Na^+$ is much lower ($D_{Na} = 1.33\cdot 10^{-9}$ ). The difference in diffusion constants is what makes the diffusion potential in the first place. If the diffusion coefficients were equal, there would be no potential, but if some ions diffuse faster than others, a field which slows down the fastest ion species is set up. In the scenario where the initial $[Na^+]$ differs the most from baseline, the diffusion potential is largest. In the scenario where the initial $[Na^+]$ is at baseline, $K^+$ and $Cl^-$ diffuse with almost the same speed, and the potential required for maintaining electroneutrality is much lower. 
 
-\subsubsection{Other models}
-As we saw in the previous section, the introduction of calcium will not be reflected in the PSD of the diffusion potential. Why is that? Does calcium have no impact on the diffusion potential at all? Here are some pros and cons:
-\begin{itemize}
-	\item
-The $Ca^{2+}$ concentration, and the shifts in concentration is much smaller than those of $Na^+$ and $K^+$. According to relation \ref{delta phi}, $Ca^{2+}$ will contribute less to the diffusion potential
-	\item The diffusion coefficient of $Ca^{2+}$ is much smaller than the diffusion constant of the other ions. According to the discussion in *section*, this will increase the impact of $Ca^{2+} $ on the diffusion potential. ($D_{Ca} = 0.71\cdot 10^{-9}$)
-	\item The main contribution to the neuronal $Ca^{2+}$ output is in the dendritic compartments, while the $K^+$ output is in the soma region. It migth be so that $Ca^{2+}$ contributes much  more to the diffusion potential in higher layers.
-\end{itemize}
-I have compared the diffusion potential of the $1\!:\!1\ K^+\!/Na^+$ model , $\Phi_{simple}$,  to the diffusion potential of the full model, $\Phi_{full}$. Figure \ref{fig:diff_Phi_X_T} shows the difference $\Phi_{simple}-\Phi_{full}$. The difference is approximately zero near soma throughout the simulation. In the dendritic region, the the difference is as large as 0.056 mV at the first seconds (140\% of $\Phi_{simple}$). The largest difference in potential is found in compartment 11. I have looked at the PSDs of all the compartments. The good match between the models in figure \ref{fig:Ca_contribution} is not the rule. For some compartments, the $1\!:\!1\ K^+\!/Na^+$ model has higher powers for all frequencis, but for the compartments 11, 12 and 13, the full model has higher powers. Figure \ref{fig:Ca_contribution12} This gives reason to believe that including $Ca^{2+}$ in the simulations does affect the diffusion potential in the higher levels of cortex. This view is coherent with the measuerments of Dietzel et al. They found that there was an initial 1:1 Na+/K+ exchange at depths of 1000 $\mu$m, but at higher layers there was an $Ca^{2+}$ inference to be corrected for. In higher levels, $Ca^{2+}$ does play a role, even if its concentraton shift are much smaller.  The focus of my work is not to model the diffusion potential itself, but the possible contribution of the diffusion potential to the PSD of the local field potential. I think that the use of the $1\!:\!1\ K^+\!/Na^+$ model is well justified for the deeper layers. 
- 
-
-\begin{figure}
-  \includegraphics[width=\linewidth]{Ca_contribution.png}
-  \caption{ **
-}
-  \label{fig:Ca_contribution}
-\end{figure}
-
-\begin{figure}
-  \includegraphics[width=\linewidth]{Ca_contribution12.png}
-  \caption{ **
-}
-  \label{fig:Ca_contribution12}
-\end{figure}
-
-\begin{figure}
-  \includegraphics[width=\linewidth]{diff_Phi_X_T.png}
-  \caption{The initial ion balance affects the magnitude of the PSD.}
-  \label{fig:diff_Phi_X_T}
-\end{figure}
- 
 
 
 
@@ -513,20 +529,34 @@ During SD: DC potential shift. This migth be a reason for diffusion not affectin
 \subsubsection{The time constant of the  $\Delta [K^+]$ decay}
 So far, we have explained the ion transport in the extracellular space by the joint effort of electrical migration and diffusion. This is not the case in living systems. Many mechanisms contribute to the maintainance of low concentration gradiens, such as ionic pumps and uptake mechanisms. We can therefore expect the gradients to have a more rapid decay. It would be a timeconsuming task to model all these processes. Instead, I have made a model which allows the concentration gradients to decay exponentially. The model is based on the 1:1 Na/K scenario, and the concentration dynamics are:
 $$
-c_{K} = c_{K}^0 +\Delta c_{max} \cdot e^{-t/\tau}
+c_{K}(x,t) = c_{K}^0 +\Delta c_{max}(x) \cdot e^{-t/\tau}
 $$
 $$
-c_{Na} = c_{Na}^0 -\Delta c_{max} \cdot e^{-t/\tau}
+c_{Na}(x,t) = c_{Na}^0 -\Delta c_{max}(x) \cdot e^{-t/\tau}
 $$
 $$
-c_{Cl} = c_{Cl}^0
+c_{Cl}(x,t) = c_{Cl}^0
 $$
-Then, I have used equation \ref{eq:gradPhi} to calculate the momentary diffusion potential at every time step. The initial concentrations used are those of Gratiy2017. I have used time constants $\tau = 1,10,20,100,300$ s. From the time series of momentary diffusion potentials I calculated the PSDs in the same fashion as described in *section*. The results are shown in figure *figure*, togther with the PSD of the 'real' diffusion potential. 
+where $c_{K}^0$, $c_{Na}^0$ and $c_{Cl}^0$ are the baseline concentrations and $\Delta c_{max} (x)$ is the initial $K^+$ deviation from baseline.  Then, I have used 
 
-The time series of the momentary diffusion potentials exhibit the smame $1/f^2$ power law. This indicates that the modelling of the diffusion potential itself migth not be necessary, as exponetially decaying concentration gradients exhibits the same properties when it comes to the PSD of the potential. The important part is to find the corret time constant. The time constant of the decay of the diffusion potential is close to 300 s. Tis is larger than the time constant of the two-ion system, but of the same order of magnitude.
 
-From experiments, we know that diffusion gradients decays much faster. How does a smallet time constant affect the PSD?. *Figure* suggest that the time constant affect the powers. The smaller time constant, the higher powers, but only up to a limit. It seems like $\tau<20 $ s, gives the largest powers. With an even smaller time constant, the slope of the PSD is approaching zero for the lowest frequencies. This is not scocking news: a fast-varying signal should yield lower powers for the lowest frequencies. What is less intuitive, is that the powers doen not appear to be higher for any frequency. A further inestigation revealed that the powers are marginally higher. 
-\section{Conclusion}
+\begin{equation*}
+\frac{\partial}{\partial x} \Phi = \frac{-\Psi \sum_k z_k D_k \frac{\partial}{\partial x} c_k}{\sum_k z_k^2 D_k c_k}
+\end{equation*}
+(equation \ref{eq:gradPhi}) to calculate the momentary diffusion potential at every time step. The initial concentrations used are those of Gratiy2017. I have used time constants $\tau = 1,10,20,50, 150, 250$ s. From the time series of momentary diffusion potentials I calculated the PSDs in the same fashion as described in *section*. The results are shown in figure \ref{fig:exponential_decay}, together with the PSD of the electrodiffusive diffusion potential. 
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{exponential_decay.png}
+  \caption{The local field potential and the diffusion potential. }
+  \label{fig:exponential_decay}
+\end{figure}
+
+The time series of the momentary diffusion potentials follow approximately the same $1/f^2$ power law as we have seen in previous sections. This indicates that the modelling of the diffusion potential itself migth not be necessary, as exponetially decaying concentration gradients exhibits the same properties when it comes to the PSD of the potential. The important part is to find the corret time constant. The time constant of the decay of the diffusion potential is close to 250 s. This is larger than the time constant of the two-ion system (which had $\tau = 153$ s), but of the same order of magnitude.
+
+From experiments, we know that the concentration gradients decay much faster. How does a small time constant affect the PSD?. Figure \ref{fig:exponential_decay} suggest that the time constant affect the powers. The smaller time constant, the higher powers, but only up to a limit. It seems like $\tau \approx 20 $ s, gives the largest powers. With an even smaller time constant, the slope of the PSD is approaching zero for the lowest frequencies. This is not shocking news: a fast-varying signal should yield lower powers for the lowest frequencies. What is less intuitive, is that the powers does not appear to be higher for any frequency. A further investigation revealed that the powers are marginally higher of the $\tau = 1$ s scenario than of the $\tau = 20 $s scenario for frequencies larger than 1 Hz.
+
+Does a faster decay of the concentration gradient produse PSDs that are able to compete with the other contribution to the LFP? No. Why does Gratiy et al. find a crossing point? 
+\section{Discussion}
 
 \section{References}
 
