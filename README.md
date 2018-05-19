@@ -8,6 +8,9 @@ halnes2016_data.py extract data from the file halnes2016.mat. It makes:
 the files halnes_delta_c.npy, data_cK.npy, data_cNa.npy, data_cCa.npy and data_cX.npy which are used in calculate_phi and init_c_cenarios
 A plot of the laminar concentration profiles based on these data. This is upper right panel of figure 2.4
 
+calculate_phi.py calculates phi with initial concentrations from Cordingley, Halnes, Dietzel, Nicholson, and store the PSDs in
+Cordingley1978_Phi_of_t.npy, Halnes2016_Phi_of_t.npy, Dietzel1982_Phi_of_t.npy, Nicholson1987_Phi_of_t.npy.
+
 psd.py calculates the PSDs of the diffusion potentials stored in Cordingley1978_Phi_of_t.npy, Halnes2016_Phi_of_t.npy, Dietzel1982_Phi_of_t.npy, Nicholson1987_Phi_of_t.npy
 There is and option to include the PSD of the LFP FRom Gratiy in the plot.
 Linear regression to find the slopes of the PSDs
