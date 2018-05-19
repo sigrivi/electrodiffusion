@@ -15,20 +15,18 @@ from electrodiffusion import makeAkses # (parameters):return(t,x)
 
 #------------------------------------------------------------------------------
 # This is a script using the data from halnes2016 to model the electrodiffusion
-# with and without Ca2+. I have found that the PSD is slgthly higher when 
-# ignoring Ca2+, and that the higest amplitude is in compartent 6 when Ca2+ is 
-# included, and in compartment 2 when it is not included.
+# to simulate the diffusion potential for the full model and for the scenarios 1--5
 
 if __name__=="__main__":
 
-
+# load the data from Halnes 2016
 	K  = np.load("data_cK.npy")
 	Na = np.load("data_cNa.npy")
 	Ca = np.load("data_cCa.npy")
 	X  = np.load("data_cX.npy")
 
-	N_t = 1000          # t_final = N_t * delta_t
-	delta_t = 1/100      # delta_t in seconds
+	N_t = 10000            # t_final = N_t * delta_t
+	delta_t = 1/100        # delta_t in seconds
 	delta_x = 1/100000     # delta_x i meters
 	N_x =  len(K)*10
 	x_values = np.linspace(0,14,num = 15)*10
@@ -63,90 +61,79 @@ if __name__=="__main__":
 # Delta K⁺ + Delta Na⁺ = 0 | Delta Cl⁻ = 0
 	Ions1 =[Ion(-c_K + .153, DNa, zNa, 'Na+'), Ion(c_K, DK, zK, 'K+'), Ion(np.ones(N_x)*.153, DCl, zCl, 'Cl-' )]
 
-# Delta K⁺ + Delta Na⁺ = Delta Cl⁻
-	Ions2 = [Ion(c_Na, DNa, zNa, 'Na+'), Ion(c_K, DK, zK, 'K+'), Ion(c_Na + c_K, DCl, zCl, 'Cl-' )]
-
 # Delta K⁺ + .5* Delta Na⁺ = .5* Delta Cl⁻
-	Ions3 = [Ion(-.5*c_K + .1515, DNa, zNa, 'Na+'), Ion(c_K, DK, zK, 'K+'), Ion(.5*c_K + .1515, DCl, zCl, 'Cl-' )]
+	Ions2 = [Ion(-.5*c_K + .1515, DNa, zNa, 'Na+'), Ion(c_K, DK, zK, 'K+'), Ion(.5*c_K + .1515, DCl, zCl, 'Cl-' )]
 
 # Delta K⁺ - Delta Cl⁻ = 0 | Delta Na⁺ = 0
-	Ions4 = [Ion(np.ones(N_x)*.150, DNa, zNa, 'Na+'), Ion(c_K, DK, zK, 'K+'), Ion(c_K + .150, DCl, zCl, 'Cl-' )]
+	Ions3 = [Ion(np.ones(N_x)*.150, DNa, zNa, 'Na+'), Ion(c_K, DK, zK, 'K+'), Ion(c_K + .150, DCl, zCl, 'Cl-' )]
 
-	Ions5 = [Ion(c_Na, DNa, zNa, 'Na+'), Ion(np.ones(N_x)*.003, DK, zK, 'K+'), Ion(c_Na, DCl, zCl, 'Cl-')]
+# Delta K⁺ =  -2* Delta Na⁺ | Delta K⁺ = -Delta Cl⁻
+	Ions4 = [Ion(-2*c_K + .156, DNa, zNa, 'Na+'), Ion(c_K, DK, zK, 'K+'), Ion(-c_K + .156, DCl, zCl, 'Cl-' )]
 
-	Ions6 = [Ion(c_Na, DNa, zNa, 'Na+'), Ion(-c_Na+.153, DK, zK, 'K+'), Ion(np.ones(N_x)*.153, DCl, zCl, 'Cl-')]
-
-# 
-	Models = [Ions0, Ions1, Ions2, Ions3, Ions4, Ions5, Ions6]
-	Names = ['full model', '$1\!:\!1\ K^+\!/Na^+$', '$1\!:\!1\ K^+\!/(Na^+-Cl^-)$', '$1\!:\!(1/2)\ K^+\!/Na^+$', '$1\!:\!1\ K^+\!/Cl^-$', '$1\!:\!1\ Na^+\!/Cl^-$', '$1\!:\!1\ Na^+\!/K^+$']
+# Delta K⁺ + Delta Na⁺ = Delta Cl⁻
+	Ions5 = [Ion(c_Na, DNa, zNa, 'Na+'), Ion(c_K, DK, zK, 'K+'), Ion(c_Na + c_K, DCl, zCl, 'Cl-' )]
 
 
-#	sys.exit()
-	Phi = []
-	PSD = np.zeros((len(Models), int(N_t/2 +1)))
+	Scenarios = [Ions0, Ions1, Ions2, Ions3, Ions4, Ions5]
+
+	Phi = [] # to store the solutions Phi_of_t
+	PSD = np.zeros((len(Scenarios), int(N_t/2 +1))) # to store the PSD_max
 	i = 0
+	
+# check that the system is electroneutral initially:
+# NB: the full model is not electroneutral, because it has current sources
 	j = 0
-	for M in Models:
+	for S in Scenarios:
 #		plotIons(M, x_values, 'ions_before%d' %j)
-		el_sum = electroneutrality(M, N_x)
+		el_sum = electroneutrality(S, N_x)
 		print(j,np.amax(el_sum))
 		j+= 1
-	location = 0 #NB: this is only used for comparing PSDs at different compartments!
-	for M in Models:
-		Phi_of_t, c_of_t = solveEquation(M, lambda_n, N_t, delta_t, N_x, delta_x)
+
+#	location = 20 #NB: this is only used for comparing PSDs at different compartments!
+	for S in Scenarios:
+		Phi_of_t, c_of_t = solveEquation(S, lambda_n, N_t, delta_t, N_x, delta_x)
 		Phi_of_t = Phi_of_t*Psi* 1000
 		Phi.append(Phi_of_t)
-#		f, psd, location = makePSD(Phi_of_t, N_t, delta_t)
-#		f, psd = signal.periodogram(Phi_of_t[location,:], 1/delta_t)
-#		print(i,location)
-#		PSD[i,:] = psd
-#		plt.plot(np.log10(f[1:-1]), np.log10(psd[1:-1]), label = Names[i])
-#		plt.legend()
-		plt.plot(np.linspace(0, (N_x-1)/100, num = N_x-1), Phi_of_t[:,0], label = Names[i])
+		print(i,'phimax', np.amax(np.abs(Phi_of_t[:,0])) )
+		f, psd, location = makePSD(Phi_of_t, N_t, delta_t)
+#		f, psd = signal.periodogram(Phi_of_t[location,:], 1/delta_t) # for comparing PSDs at different compartments
+		print(i,location) # to check that the same compartment is used
+		PSD[i,:] = psd
+
+# plot PSD:
+		plt.plot(np.log10(f[1:-1]), np.log10(psd[1:-1]), label = i)
+
+# plot the potential at t = 0:
+#		plt.plot(np.linspace(0, (N_x-1)/100, num = N_x-1), Phi_of_t[:,0], label = i)
 		i += 1
+	location = location/100
+
+# NB: the full model is not electroneutral, because it has current sources
+	j = 0
+	for S in Scenarios:
+		el_sum = electroneutrality(S, N_x)
+		print(j,np.amax(el_sum))
+		j+= 1
+
+
+# to plot the PSDs, the plots in figure 4.3
+	plt.title('PSD of the diffusion potential at depth x = %.2f mm' %location)
+	plt.xlabel('$log_{10}(frequency) $ in Hz') # frequency is measured in Hz
+	plt.ylabel('$log_{10}(PSD) $ in (mV)²/Hz') # PSD is measured in (mV)²/Hz
+	plt.legend()
+	plt.savefig('psd_scenarios', dpi = 500)
+	plt.show()
+	sys.exit()
+
+# to plot the potential at t = 0. the polt in figure 4.2
 	plt.title('$\Phi (x,0)$')
 	plt.xlabel('cortical depth in mm')
 	plt.ylabel('$\Phi$ in mV')
 	plt.legend()
-
-	plt.savefig('initial_conditions', dpi=500)
+	plt.savefig('init_c_scenarioes', dpi=500)
 	plt.show()
 	sys.exit()
-	plt.title('PSD of the diffusion potential')
-	plt.xlabel('$log_{10}(frequency)$') # frequency is measured in Hz
-	plt.ylabel('$log_{10}(PSD)$ ') # PSD is measured in (mV)²/Hz
-
-	plt.savefig('Ca_contribution', dpi = 500)
-	plt.show()
 
 
-	j = 0
-	for M in Models:
-#		plotIons(M, x_values, 'ions_after%d' %j)
-		el_sum = electroneutrality(M, N_x)
-		print(j,np.amax(el_sum))
-		print('mean deviation',np.mean(np.log10(PSD[j,1:-1]) - np.log10(PSD[0,1:-1])))
-		j+= 1
-
-#	print(np.mean(np.log10(PSD[1,1:-1])))
-#	print('mean deviation',np.mean(np.log10(PSD[1,1:-1]) - np.log10(PSD[0,1:-1])))
-# contour plot of
 
 # -----------------------------------------------------------------------------
-
-	sys.exit()
-
-	Phi_diff = Phi_of_t_without_Ca - Phi_of_t_with_Ca
-
-# contour plot of Phi
-	parameters = [N_t, delta_t, N_x, delta_x]
-	t, x = makeAkses(parameters)
-	X,Y = np.meshgrid(t,x[1:])
-	plt.figure()
-	cp = plt.contourf(X,Y,Phi_diff)
-	plt.colorbar(cp)
-	plt.xlabel('time (s)')
-	plt.ylabel('cortical depth (mm)')
-	plt.title('difference in $ \Phi$ (mV)')
-	plt.savefig('diff_Phi_X_T', dpi =225)
-	plt.show()
