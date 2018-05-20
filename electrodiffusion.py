@@ -5,11 +5,13 @@ from scipy import linalg
 import time
 import random
 import sys
+import h5py
 import matplotlib.cm as cm
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 from scipy import signal
 from scipy import io
+from scipy import stats
 
 
 
@@ -27,6 +29,8 @@ class Ion:
 class ConcentrationProfile:
 	def __init__(self, x_values, c_values, delta_x, Na_base, K_base, name): # c_values are in mM
 		self.N_x     = int(x_values[-1]) + 1
+		self.c_values = np.asarray(c_values)
+		self.x_values = np.asarray(x_values)
 		self.delta_x = delta_x # delta_x is measured in meters
 		self.delta_c = 0.001*np.interp(np.linspace(0, self.N_x-1, num = self.N_x), x_values, c_values)
 		self.c_Na    = 0.001*Na_base*np.ones(self.N_x) - self.delta_c
@@ -65,11 +69,10 @@ def forwardStep(Ions,lambda_n, N_t, delta_t, N_x, delta_x, grad_phi):
 		I.c = I.cNew.copy()
 
 def exponentialDecay(Ions, delta_t, tau): 
-	delta_c = Ions[1].c-Ions[1].c[0]
-	Ions[1].cNew = delta_c*np.exp(-delta_t/tau) + Ions[1].c[0]
-	Ions[0].cNew = -delta_c*np.exp(-delta_t/tau) + Ions[0].c[0]
-	Ions[1].c = Ions[1].cNew.copy()
-	Ions[0].c = Ions[0].cNew.copy()
+	for I in Ions:
+		delta_c = I.c-I.c[0]
+		I.cNew = delta_c*np.exp(-delta_t/tau) + I.c[0]
+		I.c = I.cNew.copy()
 
 
 def solveEquation(Ions,lambda_n, N_t, delta_t, N_x, delta_x, tau = 0):
@@ -124,9 +127,12 @@ def electroneutrality(Ions, N, plot = 'false' ):
 
 	return(valence_times_concentration/(norm_factor))
 
-def plotIons(Ions, x, filename):
+def plotIons(Ions, x, filename, datapoints =[0,0], X=[]):
 	for I in Ions:
 		plt.plot(1000*(I.c-I.c[0]*np.ones(len(I.c))),-x, label = I.name)
+	N = len(datapoints)
+	if len(datapoints) == len(X):
+		plt.plot(datapoints[1:-1], -X[1:-1],  'ko')
 	plt.title('Deviation from base line concentrations (' + filename +')')
 	plt.xlabel('$\Delta c$ (mM)')
 	plt.ylabel('cortical depth (mm)')
@@ -171,6 +177,48 @@ def plotPhi(Phi_of_t, parameters, name):
 	plt.savefig(name +'Phi_of_t', dpi =225)
 #	print(x)
 	plt.show()
+
+def PSD_of_LFP(): # make the PSD of the LFP from Gratiy
+	file_name =  'mouse_1_lfp_trial_avg_3sec.h5'
+	h5=h5py.File(file_name,'r')
+#print( h5.keys() )
+#	lfp_on_flash = h5['lfp_on_flash'][...]
+	lfp_off_flash = h5['lfp_off_flash'][...]
+	z = h5['zdepth'][...]
+	time = h5['time'][...]
+
+	fs=2500 # sampling rate
+	x=time
+	N=len(x)
+	fmax=fs//2
+
+	psd = np.zeros((len(z),int(N/2+1)))
+
+	f_log = np.logspace(-1,2,100)
+#	psd_on = np.zeros((len(z),N//2+1))
+	psd_off = np.zeros((len(z),N//2+1))
+
+#	for ich,data_ch in enumerate(lfp_on_flash):
+#	    f, Pxx_den = signal.periodogram(data_ch, fs)
+#	    psd_on[ich,:]=Pxx_den
+	#    psd_on_log[ich,:] =np.interp(f_log, f, Pxx_den)
+	    
+	psd_off_log = np.zeros((len(z),len(f_log)))
+	    
+	for ich,data_ch in enumerate(lfp_off_flash):
+	    f, Pxx_den = signal.periodogram(data_ch, fs)
+	    psd_off[ich,:]=Pxx_den
+	#    psd_off_log[ich,:] =np.interp(f_log, f, Pxx_den)
+
+
+	psd_off_mean = np.mean(psd_off,axis=0)
+#	psd_on_mean = np.mean(psd_on,axis=0)
+#	sem_on = stats.sem(psd_on,axis=0)
+	sem_off = stats.sem(psd_off,axis=0)
+
+#	plt.plot(np.log10(f[:100]), np.log10(psd_on_mean[:100]),'xkcd:lavender', label = 'LFP (flash on)')
+	plt.plot(np.log10(f[:100]), np.log10(psd_off_mean[:100]),'xkcd:pink', label = 'LFP ')
+
 #-----------------------------------------------
 if __name__=="__main__":
 	sys.exit()

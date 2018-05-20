@@ -22,8 +22,8 @@ if __name__=="__main__":
 
 	N_t = 10000          # t_final = N_t * delta_t
 	delta_t = 1/100      # delta_t in seconds
-	delta_x = 1/100000     # delta_x i meters
-	N_x = 100
+	delta_x = 1/10000     # delta_x i meters
+	N_x = 10
 
 # valence: 
 	zNa = 1                                         
@@ -58,7 +58,7 @@ if __name__=="__main__":
 	tau = (lambda_n*L)**2/(D*np.pi**2)
 
 	print('tau', tau)
-	sys.exit()
+
 	c_Na = c_0 + delta_c
 	c_Cl = c_0 + delta_c
 
@@ -95,12 +95,15 @@ if __name__=="__main__":
 #	plt.plot(t,c_of_t1[N_x//2,:] - c_exact_of_t[N_x//2,:])
 #	plt.show()
 	print('max phi', np.amax(Phi_of_t1[:,0]))
+	X=x[:-1]+0.5*delta_x
 	for i in range(5):
 
 		time = int(i*delta_t*N_t/5)
-		plt.plot(x[:-1]*1000,Phi_of_t1[:, int(i*N_t/5)], label = 't = %d s' %time )
+		plt.plot(X*1000,Phi_of_t1[:, int(i*N_t/5)], label = 't = %d s' %time )
+		print('max phi',int(i*N_t/5), np.amax(Phi_of_t1[:,int(i*N_t/5)]))
+		print(.10952503128985423*np.exp(-int(i*N_t/500)/tau))
 
-	plt.plot(x[:-1]*1000, .1095*np.sin(np.pi*x[:-1]/L))
+	plt.plot(X*1000, .10952503128985423*np.sin(np.pi*X/(L-delta_x)))
 	plt.xlabel('x in mm')
 	plt.ylabel('$\Phi(x)$ in mV')
 	plt.title('The diffusion potential of the two-ion system at time t')

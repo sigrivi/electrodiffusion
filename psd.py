@@ -11,6 +11,7 @@ from electrodiffusion import Model # (self, phi, parameters, name, color):
 
 # this program is used to calculate and plot the PSDs of the diff.pot.
 # and do linear regression on log(PSD)
+# use PSD_of_LFP to plot the PSD of the LFP from Gratiy together with the other PSDs
 
 if __name__=="__main__":
 

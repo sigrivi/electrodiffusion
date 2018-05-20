@@ -16,7 +16,7 @@ from electrodiffusion import solveEquation #(Ions,lambda_n, N_t, delta_t, N, del
 from electrodiffusion import Ion # (self, c_init, D, z, name ):
 from electrodiffusion import plotIons #(Ions, x, filename):
 from electrodiffusion import plotPhi #(Phi_of_t, parameters, title):
-from electrodiffusion import makePS # (Phi_of_t, N_t, delta_t): return(f, psd_max, location)
+from electrodiffusion import makePSD # (Phi_of_t, N_t, delta_t): return(f, psd_max, location)
 from electrodiffusion import ConcentrationProfile # (values, c_values, delta_x, Na_base, K_base, name)
 from electrodiffusion import electroneutrality
 
@@ -64,24 +64,32 @@ if __name__=="__main__":
 
 	Gratiy2017 = ConcentrationProfile(x_values, c_values, delta_x, 150, 3, 'Gratiy2017')
 
+
+# 3 Nicholson1987
+#	Gratiy2017 = ConcentrationProfile([0,5,10,15,20,25,30,35,40,45,50,60,70,75], [0,4.4,4.0,3.0,2.3, 1.7,1.3,1.,1.2,1.0, 0.8, 0.7,0.5, 0], delta_x, 150, 3, 'Nicholson1987')
+
+
 	for i in [0, 1 ,10, 20, 50, 150,250]: # set time constants here
 		Ions = [Ion(Gratiy2017.c_Na,DNa,zNa,'$Na^+$'),Ion(Gratiy2017.c_K, DK, zK,'$K^+$' ),Ion(Gratiy2017.c_Cl, DCl, zCl,'$Cl^-$' )]
 
 		Phi_of_t, c_of_t = solveEquation(Ions, lambda_n, N_t, delta_t, Gratiy2017.N_x, delta_x, tau =i)
 		Phi_of_t = Phi_of_t*Psi*1000
 
+#		plotPhi(Phi_of_t, [N_t, delta_t, Gratiy2017.N_x, delta_x], 'tau')
+#	parameters = [N_t, delta_t, N_x, delta_x]
+
 		el_sum = electroneutrality(Ions, Gratiy2017.N_x) # true = 'true' if you want to plot
 		assert np.amax(el_sum) < 1.e-13       # unit test
 
 		f, psd, location = makePSD(Phi_of_t, N_t, delta_t)
 		if i == 0: # tau = 0 corresponds to the electrodiffusive model
-			plt.plot(np.log10(f[1:-1]), np.log10(psd[1:-1]), 'xkcd:indigo', label = 'Gratiy2017')
+			plt.plot(np.log10(f[1:-1]), np.log10(psd[1:-1]), 'xkcd:indigo', label = 'KNP')
 		else:
 			plt.plot(np.log10(f[1:-1]), np.log10(psd[1:-1]), label = '\u03C4 = %d'%i)
 		print(location)
 		plt.legend()
-	plt.title('PSD of the diffusion potential' )
+	plt.title('PSD of the diffusion potential (Cordingley1978)' )
 	plt.xlabel('$log_{10}(frequency)$ in Hz')
 	plt.ylabel('$log_{10}(PSD)$ in (mV)²/Hz')
-	plt.savefig('exponential_decay', dpi=500)
+	plt.savefig('exponential_decay_Cordingley', dpi=500)
 	plt.show()

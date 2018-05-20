@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import io
 import sys
-from scipy import signal
 
 from electrodiffusion import solveEquation #(Ions,lambda_n, N_t, delta_t, N, delta_x): return(Phi_of_t) NB: Ions are changed in place
 from electrodiffusion import Ion # (self, c_init, D, z, name ):
@@ -19,8 +17,8 @@ from electrodiffusion import plotPhi #(Phi_of_t, parameters, title):
 #------------------------------------------------------------------------------
 if __name__=="__main__":
 
-	N_t = 10000          # t_final = N_t * delta_t
-	delta_t = 1/100      # delta_t in seconds
+	N_t = 10000            # t_final = N_t * delta_t
+	delta_t = 1/100        # delta_t in seconds
 	delta_x = 1/100000     # delta_x i meters
 
 # valence: 
@@ -53,7 +51,7 @@ if __name__=="__main__":
 	           0.8255159474671664, 0.908067542213884, 0.8180112570356467, 0.8405253283302068, 0.7804878048780483,0])
 	x_values = np.linspace(0,26,num = 27)*10
 
-	Gratiy2017 = ConcentrationProfile(x_values, c_values, delta_x, 150, 3, 'Gratiy2017')
+	Cordingley1978 = ConcentrationProfile(x_values, c_values, delta_x, 150, 3, 'Cordingley1978')
 
 # 1 Halnes2016
 	halnes_delta_c = np.load('halnes_delta_c.npy')
@@ -61,19 +59,20 @@ if __name__=="__main__":
 	Halnes2016 = ConcentrationProfile(halnes_x_values, halnes_delta_c, delta_x, 150, 3, 'Halnes2016')
 
 # 2 Dietzel1982
-	Dietzel1982_1 = ConcentrationProfile([0,20,40,60,80,100,160,170], [0,7.5,4.5,3.5,5,3,0.5,0], delta_x, 148,3, 'Dietzel1982')
+	Dietzel1982_1 = ConcentrationProfile([0,6,15,30,52,72,90,99, 114,135,165, 170], [0,5.5,3.5,4.0,5.8,5.9,5.0,5.2,2.6, 4.0, 3.0,0], delta_x, 148,3, 'Dietzel1982')
 
 # 3 Nicholson1987
-	Nicholson1987 = ConcentrationProfile([0,10,20,30,40,50,60,70], [0, 4.4, 2.7, 1.6, 1., 0.8, 0.7, 0], delta_x, 150, 3, 'Nicholson1987')
+	Nicholson1987 = ConcentrationProfile([0,5,10,15,20,25,30,35,40,45,50,60,70,75], [0,4.4,4.0,3.0,2.3, 1.7,1.3,1.,1.2,1.0, 0.8, 0.7,0.5, 0], delta_x, 150, 3, 'Nicholson1987')
 
 # 4 Herreras1993 Spreading Depression
-	Herreras1993 = ConcentrationProfile([0,10,20,30,40,50,60,70,80,100], [0,1,2,3,4,25,20,30,20,0], delta_x, 150, 3, 'Herreras1993')
+	Herreras1993 = ConcentrationProfile([0,10,20,30,40,50,60,70,80,100], [0,3,7,50,45,45,45,45,30,0], delta_x, 150, 3, 'Herreras1993')
 
 # List of all profiles
-	Profiles = [Gratiy2017, Halnes2016, Dietzel1982_1, Nicholson1987, Herreras1993]
+	Profiles = [Cordingley1978, Halnes2016, Dietzel1982_1, Nicholson1987, Herreras1993]
 
 # choose a profile from the list of profiles
-	choose_profile = 4
+	choose_profile = 1
+
 
 # save the parameters used
 	N_x = Profiles[choose_profile].N_x
@@ -92,8 +91,9 @@ if __name__=="__main__":
 	assert np.amax(el_sum) < 1.e-14       # unit test
 
 # plot initial ion concentration
-	plotIons(Ions, x, Profiles[choose_profile].name)
-
+	print(Profiles[choose_profile].c_values)
+	plotIons(Ions, x, Profiles[choose_profile].name,  Profiles[choose_profile].c_values, Profiles[choose_profile].x_values/100)
+	
 # solve the equation
 	Phi_of_t, c_of_t = solveEquation(Ions, lambda_n, N_t, delta_t, N_x, delta_x)
 
